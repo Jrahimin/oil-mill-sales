@@ -4,11 +4,11 @@ namespace App\Traits;
 
 trait ApiResponseTrait
 {
-    public function successResponse(string $message, $data, $encryption = false)
+    public function successResponse(string $message, $data)
     {
         return response()->json([
             'message'  =>  $message,
-            'data'      =>  ($encryption) ? self::_encrypt_string(json_encode($data)) : $data
+            'data'     =>  $data
         ], 200);
     }
 
@@ -24,7 +24,7 @@ trait ApiResponseTrait
     {
         return response()->json([
             'message'  =>  $message,
-            'data'      =>  null
+            'data'     =>  null
         ], 422);
     }
 
@@ -32,7 +32,7 @@ trait ApiResponseTrait
     {
         return response()->json([
             'message'  =>  $message,
-            'data'      =>  ""
+            'data'     =>  ""
         ], 401);
     }
 }
