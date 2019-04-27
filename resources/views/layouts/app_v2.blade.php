@@ -22,10 +22,6 @@
     <!--  Light Bootstrap Table core CSS    -->
     <link href={{ asset('css/navbar-fixed-side.css')}} rel="stylesheet"/>
 
-
-    <!-- Bootstrap Datepicker css -->
-    <link href={{ asset('css/bootstrap-datepicker.css')}} rel="stylesheet"/>
-
     <!--     Fonts and icons     -->
 
     <link href='{{ asset('fonts/fonts.css') }}' rel='stylesheet' type='text/css'>
@@ -131,7 +127,7 @@
 
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-                <li><a href="#"><i class="fa fa-users" aria-hidden="true"></i><span>User</span></a></li>
+                <li><a href="{{ route('users.index') }}"><i class="fa fa-users" aria-hidden="true"></i><span>User</span></a></li>
                 <li><a href="#"><i class="fa fa-list" aria-hidden="true"></i><span>Item Category</span></a></li>
                 <li><a href="#"><i class="fa fa-product-hunt" aria-hidden="true"></i><span>Item</span></a></li>
                 <li><a href="#"><i class="fa fa-address-book" aria-hidden="true"></i><span>Stock</span></a></li>
@@ -160,7 +156,7 @@
 
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-            <b>Version</b> 0.3.0
+            <b>Version</b> 1.0.0
         </div>
 
         <strong>&copy; 2018-{{date('Y')}} <a href="http://banglasofttech.com">BanglaSoftTech</a></strong> All rights reserved.
@@ -176,6 +172,11 @@
 <script src="{{ asset("js/tag-it.js")}}" type="text/javascript" charset="utf-8"></script>
 <script src={{ asset('js/bootstrap.min.js')}} type="text/javascript"></script>
 
+<script src="{{asset('js/vue.min.js')}}"></script>
+<script src="{{asset('js/axios.min.js')}}"></script>
+<script src="{{asset('js/vue-toasted.min.js')}}"></script>
+<script src="{{asset('js/vue-spinner.min.js')}}"></script>
+
 <!-- Admin LTE -->
 <script src="{{ asset('js/adminlte.js') }}"></script>
 
@@ -184,19 +185,19 @@
 
 
 <!-- Data table -->
-<script type="text/javascript" src="{{ asset('DataTables/datatables.min.js') }}"></script>
+{{--<script type="text/javascript" src="{{ asset('DataTables/datatables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset("DataTables/mark.min.js") }}"></script>
 <script type="text/javascript" src="{{ asset("js/datatables.mark.js") }}"></script>
 <!-- Select 2 -->
-<script src="{{ asset('js/select2.min.js') }}"></script>
+<script src="{{ asset('js/select2.min.js') }}"></script>--}}
 
 <!-- Bootstrap DatePicker JS -->
-<script src={{ asset('js/bootstrap-datepicker.js')}} type="text/javascript"></script>
+{{--<script src={{ asset('js/bootstrap-datepicker.js')}} type="text/javascript"></script>
 
 
 
 <!-- Token Input js -->
-<script src={{ asset('js/jquery.tokeninput.js')}}></script>
+<script src={{ asset('js/jquery.tokeninput.js')}}></script>--}}
 
 <!--  Checkbox, Radio & Switch Plugins -->
 <script src={{ asset('js/bootstrap-checkbox-radio-switch.js')}}></script>

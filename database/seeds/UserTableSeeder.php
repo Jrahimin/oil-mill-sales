@@ -19,7 +19,7 @@ class UserTableSeeder extends Seeder
                 'email' => "admin@gmail.com",
                 'email_verified_at' => now(),
                 'mobile_no' => '01846999999',
-                'type' => 1,
+                'type' => "admin",
                 'password' => bcrypt('12345'),
                 'remember_token' => Str::random(10),
             ]);
