@@ -51,10 +51,19 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request) //php artisan make:request User/UserStoreRequest
     {
-        $request['password'] = bcrypt($request->password);
-        User::create($request->all());
+        try{
+            if(auth()->user()->type != 'admin')
+                return $this->exceptionResponse('You are not allowed to update user',401);
 
-        return $this->successResponseWithMsg('User Registered Successfully');
+            $request['password'] = bcrypt($request->password);
+            User::create($request->all());
+
+            return $this->successResponseWithMsg('User Registered Successfully');
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**
@@ -88,7 +97,16 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        User::findOrFail($id)->update($request->all());
+        try{
+            if(auth()->user()->type != 'admin')
+                return $this->exceptionResponse('You are not allowed to update user',401);
+
+            User::findOrFail($id)->update($request->all());
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**

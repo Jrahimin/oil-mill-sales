@@ -14,27 +14,8 @@ trait ApiResponseTrait
         return response()->json($message, 200);
     }
 
-    public function exceptionResponse(string $exceptionMessage)
+    public function exceptionResponse(string $exceptionMessage, $status=500)
     {
-        return response()->json([
-            'message'  =>  $exceptionMessage,
-            'data'     =>  null
-        ], 500);
-    }
-
-    public function invalidResponse(string $message)
-    {
-        return response()->json([
-            'message'  =>  $message,
-            'data'     =>  null
-        ], 422);
-    }
-
-    public function unauthorizedResponse(string $message)
-    {
-        return response()->json([
-            'message'  =>  $message,
-            'data'     =>  ""
-        ], 401);
+        return response()->json(['message'  =>  $exceptionMessage,], $status);
     }
 }

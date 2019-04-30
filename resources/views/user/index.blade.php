@@ -36,7 +36,7 @@
                             <td>@{{ user.address }}</td>
                             <td>@{{ user.created_date }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal" @click="user_id=user.id; aUser=user;">Edit</a>
+                                <a href="#" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>
 
                                 @include('user.edit')
 
@@ -95,6 +95,7 @@
 
 @section('additionalJS')
     <script>
+        Vue.use(Toasted);
         new Vue({
             el: "#userList",
 
@@ -125,27 +126,98 @@
                         console.log(error);
                     });
                 },
+
                 createUser(){
                     axios.post('{{ route('users.store') }}', this.newUser).then(response=>{
-                        console.log(response.data)
                         this.getUserList();
+                        this.$toasted.success("Successfully Registered User",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     }).catch(error=>{
-                        console.log(error);
+                        this.errors = error.response.data.messages;
+                        this.$toasted.error(this.errors[0],{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     });
                 },
+
                 editUser(id){
                     axios.put('{{ route('users.index') }}/'+id, this.aUser).then(response=>{
-                        console.log(response.data)
                         this.getUserList();
+                        this.$toasted.success("Successfully Updated User",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     }).catch(error=>{
-                        console.log(error);
+                        this.errors = error.response.data.messages;
+
+                        this.$toasted.error(this.errors[0],{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     });
                 },
+                editClickAction(id, userObj){
+                    this.user_id = id;
+                    this.aUser = JSON.parse(JSON.stringify(userObj)); // deep cloning of object avoiding shallow copy of object reference
+                },
+
                 deleteUser(id){
                     axios.post('{{ route('users.index') }}/'+id, {_method:'delete'}).then(response=>{
                         this.getUserList();
+                        this.$toasted.success("Successfully Deleted User",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     }).catch(error=>{
-                        console.log(error);
+                        this.$toasted.success("Something went wrong",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
                     })
                 },
             }
