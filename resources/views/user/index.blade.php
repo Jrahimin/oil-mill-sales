@@ -3,9 +3,11 @@
 @section('content')
     <div id="userList">
         <div class="col-md-10 col-md-offset-1">
-            <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createUser">
-                <i class="fa fa-plus"> Add</i>
-            </button>
+            @if(auth()->user()->type=='admin')
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createUser">
+                    <i class="fa fa-plus"> Add</i>
+                </button>
+            @endif
             @include('user.create')
             <br/><hr>
             <div class="panel panel-info">
@@ -20,32 +22,38 @@
                         <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Type</th>
                             <th>Email</th>
                             <th>MobileNo</th>
                             <th>Address</th>
                             <th>Reg. Date</th>
-                            <th>Edit</th>
+                            @if(auth()->user()->type=='admin')
+                                <th>Action</th>
+                            @endif
                         </tr>
                         </thead>
 
                         <tbody>
                         <tr v-for="user in users" >
                             <td>@{{ user.name }}</td>
+                            <td>@{{ user.type }}</td>
                             <td>@{{ user.email }} </td>
                             <td>@{{ user.mobile_no }}</td>
                             <td>@{{ user.address }}</td>
                             <td>@{{ user.created_date }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>
+                                @if(auth()->user()->type=='admin')
+                                    <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>
 
-                                @include('user.edit')
+                                    @include('user.edit')
 
-                                <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="user_id=user.id">@lang('Delete')</a>
+                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="user_id=user.id">@lang('Delete')</a>
+                                @endif
 
                                 <div id="deleteModal" class="modal fade"  >
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header">
+                                            <div class="modal-header" style="background-color: indianred">
                                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                                                 <h4 class="modal-title">Confirmation </h4>
                                             </div>
@@ -142,7 +150,22 @@
                             },
                         });
                     }).catch(error=>{
-                        this.errors = error.response.data.messages;
+                        if(error.response.status !== 422){
+                            let errorMsg = error.response.data.message;
+                            this.$toasted.error(errorMsg,{
+                                position: 'top-center',
+                                theme: 'bubble',
+                                duration: 6000,
+                                action : {
+                                    text : 'Close',
+                                    onClick : (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            });
+                        }
+                        else
+                            this.errors = error.response.data.messages;
                     });
                 },
 
@@ -162,7 +185,22 @@
                             },
                         });
                     }).catch(error=>{
-                        this.errors = error.response.data.messages;
+                        if(error.response.status !== 422){
+                            let errorMsg = error.response.data.message;
+                            this.$toasted.error(errorMsg,{
+                                position: 'top-center',
+                                theme: 'bubble',
+                                duration: 6000,
+                                action : {
+                                    text : 'Close',
+                                    onClick : (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            });
+                        }
+                        else
+                            this.errors = error.response.data.messages;
                     });
                 },
                 editClickAction(id, userObj){
@@ -186,7 +224,8 @@
                             },
                         });
                     }).catch(error=>{
-                        this.$toasted.success("Something went wrong",{
+                        let errorMsg = error.response.data.message;
+                        this.$toasted.error(errorMsg,{
                             position: 'top-center',
                             theme: 'bubble',
                             duration: 6000,
