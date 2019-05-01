@@ -8,7 +8,7 @@
             </button>
             @include('user.create')
             <br/><hr>
-            <div class="panel panel info">
+            <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
                         <div class="panel-title col-md-6">User List</div>
@@ -36,7 +36,7 @@
                             <td>@{{ user.address }}</td>
                             <td>@{{ user.created_date }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>
+                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>
 
                                 @include('user.edit')
 
@@ -89,6 +89,7 @@
                     <small class="col-md-offset-5">Showing @{{ pagination.from }} to @{{ pagination.to }} of @{{ pagination.total }} entries</small>
                 </div>
             </div>
+            @include('errors.ajax_error')
         </div>
     </div>
 @endsection
@@ -122,13 +123,12 @@
                         that.users = response.data.data;
                         that.pagination = response.data;
                         that.total = that.pagination.total;
-                    }).catch(error=>{
-                        console.log(error);
-                    });
+                    })
                 },
 
                 createUser(){
                     axios.post('{{ route('users.store') }}', this.newUser).then(response=>{
+                        this.errors = [];
                         this.getUserList();
                         this.$toasted.success("Successfully Registered User",{
                             position: 'top-center',
@@ -143,22 +143,12 @@
                         });
                     }).catch(error=>{
                         this.errors = error.response.data.messages;
-                        this.$toasted.error(this.errors[0],{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
                     });
                 },
 
                 editUser(id){
                     axios.put('{{ route('users.index') }}/'+id, this.aUser).then(response=>{
+                        this.errors = [];
                         this.getUserList();
                         this.$toasted.success("Successfully Updated User",{
                             position: 'top-center',
@@ -173,18 +163,6 @@
                         });
                     }).catch(error=>{
                         this.errors = error.response.data.messages;
-
-                        this.$toasted.error(this.errors[0],{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
                     });
                 },
                 editClickAction(id, userObj){
@@ -194,6 +172,7 @@
 
                 deleteUser(id){
                     axios.post('{{ route('users.index') }}/'+id, {_method:'delete'}).then(response=>{
+                        this.errors = [];
                         this.getUserList();
                         this.$toasted.success("Successfully Deleted User",{
                             position: 'top-center',
