@@ -11,6 +11,10 @@
 |
 */
 
+Route::get('test',function (){
+   dd(now()->format('Y-m-d'));
+});
+
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::resource('users', 'UserController')->middleware('auth');
