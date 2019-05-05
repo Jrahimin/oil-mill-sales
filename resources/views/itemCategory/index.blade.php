@@ -2,9 +2,9 @@
 
 @section('content')
     <div id="itemCategoryList">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-6 col-md-offset-3">
             @if(auth()->user()->type=='admin')
-                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createItemCategory">
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createItemCategory" @click="newItemCategory={}">
                     <i class="fa fa-plus"> Add</i>
                 </button>
             @endif
@@ -23,7 +23,7 @@
                         <tr>
                             <th>Name</th>
                             @if(auth()->user()->type=='admin')
-                                <th>Action</th>
+                                <th class="pull-right">Action</th>
                             @endif
                         </tr>
                         </thead>
@@ -32,7 +32,7 @@
                         <tr v-for="itemCategory in itemCategories" >
                             <td>@{{ itemCategory.name }}</td>
 
-                            <td>
+                            <td class="pull-right">
                                 @if(auth()->user()->type=='admin')
                                     <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(itemCategory.id, itemCategory)">Edit</a>
 
@@ -116,7 +116,7 @@
             methods:{
                 getItemCategoryList(pageUrl) {
                     let that = this;
-                    pageUrl = pageUrl == undefined ? `{{route('itemCategory.index')}}` : pageUrl;
+                    pageUrl = pageUrl == undefined ? `{{route('item-categories.index')}}` : pageUrl;
 
                     axios.get(pageUrl).then(response=> {
                         that.itemCategories = response.data.data;
@@ -126,7 +126,7 @@
                 },
 
                 createItemCategory(){
-                    axios.post('{{ route('itemCategory.store') }}', this.newItemCategory).then(response=>{
+                    axios.post('{{ route('item-categories.store') }}', this.newItemCategory).then(response=>{
                         this.errors = [];
                         this.newContent ='';
                         this.getItemCategoryList();
@@ -163,38 +163,38 @@
 
                 editItemCategory(id){
                     console.log(this.aItemCategory)
-                    {{--axios.post('{{ route('itemCategory.update') }}/'+id, this.aItemCategory).then(response=>{--}}
-                        {{--this.errors = [];--}}
-                        {{--this.getItemCategoryList();--}}
-                        {{--this.$toasted.success("Successfully Updated Item Category",{--}}
-                            {{--position: 'top-center',--}}
-                            {{--theme: 'bubble',--}}
-                            {{--duration: 6000,--}}
-                            {{--action : {--}}
-                                {{--text : 'Close',--}}
-                                {{--onClick : (e, toastObject) => {--}}
-                                    {{--toastObject.goAway(0);--}}
-                                {{--}--}}
-                            {{--},--}}
-                        {{--});--}}
-                    {{--}).catch(error=>{--}}
-                        {{--if(error.response.status !== 422){--}}
-                            {{--let errorMsg = error.response.data.message;--}}
-                            {{--this.$toasted.error(errorMsg,{--}}
-                                {{--position: 'top-center',--}}
-                                {{--theme: 'bubble',--}}
-                                {{--duration: 6000,--}}
-                                {{--action : {--}}
-                                    {{--text : 'Close',--}}
-                                    {{--onClick : (e, toastObject) => {--}}
-                                        {{--toastObject.goAway(0);--}}
-                                    {{--}--}}
-                                {{--},--}}
-                            {{--});--}}
-                        {{--}--}}
-                        {{--else--}}
-                            {{--this.errors = error.response.data.messages;--}}
-                    {{--});--}}
+                    axios.put('{{ route('item-categories.index') }}/'+id, this.aItemCategory).then(response=>{
+                        this.errors = [];
+                        this.getItemCategoryList();
+                        this.$toasted.success("Successfully Updated Item Category",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
+                    }).catch(error=>{
+                        if(error.response.status !== 422){
+                            let errorMsg = error.response.data.message;
+                            this.$toasted.error(errorMsg,{
+                                position: 'top-center',
+                                theme: 'bubble',
+                                duration: 6000,
+                                action : {
+                                    text : 'Close',
+                                    onClick : (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            });
+                        }
+                        else
+                            this.errors = error.response.data.messages;
+                    });
                 },
                 editClickAction(id, itemCategoryObj){
                     this.item_category_id = id;
@@ -202,34 +202,34 @@
                 },
 
                 deleteUser(id){
-                    {{--axios.post('{{ route('itemCategory.destroy') }}/'+id, {_method:'delete'}).then(response=>{--}}
-                        {{--this.errors = [];--}}
-                        {{--this.getItemCategoryList();--}}
-                        {{--this.$toasted.success("Successfully Deleted Item Category",{--}}
-                            {{--position: 'top-center',--}}
-                            {{--theme: 'bubble',--}}
-                            {{--duration: 6000,--}}
-                            {{--action : {--}}
-                                {{--text : 'Close',--}}
-                                {{--onClick : (e, toastObject) => {--}}
-                                    {{--toastObject.goAway(0);--}}
-                                {{--}--}}
-                            {{--},--}}
-                        {{--});--}}
-                    {{--}).catch(error=>{--}}
-                        {{--let errorMsg = error.response.data.message;--}}
-                        {{--this.$toasted.error(errorMsg,{--}}
-                            {{--position: 'top-center',--}}
-                            {{--theme: 'bubble',--}}
-                            {{--duration: 6000,--}}
-                            {{--action : {--}}
-                                {{--text : 'Close',--}}
-                                {{--onClick : (e, toastObject) => {--}}
-                                    {{--toastObject.goAway(0);--}}
-                                {{--}--}}
-                            {{--},--}}
-                        {{--});--}}
-                    {{--})--}}
+                    axios.post('{{ route('item-categories.index') }}/'+id, {_method:'delete'}).then(response=>{
+                        this.errors = [];
+                        this.getItemCategoryList();
+                        this.$toasted.success("Successfully Deleted Item Category",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
+                    }).catch(error=>{
+                        let errorMsg = error.response.data.message;
+                        this.$toasted.error(errorMsg,{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
+                    })
                 },
             }
         });

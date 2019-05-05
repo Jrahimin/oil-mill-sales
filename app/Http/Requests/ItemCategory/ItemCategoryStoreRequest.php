@@ -27,7 +27,7 @@ class ItemCategoryStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required'
+            'name' => 'required',
         ];
     }
 

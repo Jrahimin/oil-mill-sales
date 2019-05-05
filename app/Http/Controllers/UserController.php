@@ -98,7 +98,7 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, $id)
     {
         try{
-            if(auth()->user()->type != 'user')
+            if(auth()->user()->type != 'admin')
                 return $this->exceptionResponse('You are not allowed to update user',401);
 
             User::findOrFail($id)->update($request->all());
@@ -119,7 +119,7 @@ class UserController extends Controller
     {
         try{
             if(auth()->user()->type != 'admin')
-                return $this->exceptionResponse('You are not allowed to update user',401);
+                return $this->exceptionResponse('You are not allowed to delete user',401);
 
             User::destroy($id);
             return $this->successResponseWithMsg('User Deleted Successfully');

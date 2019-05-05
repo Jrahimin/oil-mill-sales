@@ -4,7 +4,7 @@
     <div id="userList">
         <div class="col-md-10 col-md-offset-1">
             @if(auth()->user()->type=='admin')
-                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createUser">
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createUser" {{--@click="newUser={}"--}}>
                     <i class="fa fa-plus"> Add</i>
                 </button>
             @endif
