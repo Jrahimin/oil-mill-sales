@@ -4,11 +4,11 @@
     <div id="itemCategoryList">
         <div class="col-md-10 col-md-offset-1">
             @if(auth()->user()->type=='admin')
-                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createUser">
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createItemCategory">
                     <i class="fa fa-plus"> Add</i>
                 </button>
             @endif
-            {{--@include('user.create')--}}
+            @include('itemCategory.create')
             <br/><hr>
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -32,36 +32,36 @@
                         <tr v-for="itemCategory in itemCategories" >
                             <td>@{{ itemCategory.name }}</td>
 
-                            {{--<td>--}}
-                                {{--@if(auth()->user()->type=='admin')--}}
-                                    {{--<a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(user.id, user)">Edit</a>--}}
+                            <td>
+                                @if(auth()->user()->type=='admin')
+                                    <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(itemCategory.id, itemCategory)">Edit</a>
 
-                                    {{--@include('user.edit')--}}
+                                    @include('itemCategory.edit')
 
-                                    {{--<a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="user_id=user.id">@lang('Delete')</a>--}}
-                                {{--@endif--}}
+                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="item_category_id=itemCategory.id">@lang('Delete')</a>
+                                @endif
 
-                                {{--<div id="deleteModal" class="modal fade"  >--}}
-                                    {{--<div class="modal-dialog">--}}
-                                        {{--<div class="modal-content">--}}
-                                            {{--<div class="modal-header" style="background-color: indianred">--}}
-                                                {{--<button type="button" class="close" data-dismiss="modal">&times;</button>--}}
-                                                {{--<h4 class="modal-title">Confirmation </h4>--}}
-                                            {{--</div>--}}
-                                            {{--<div class="modal-body">--}}
-                                                {{--<p> Are you sure?</p>--}}
+                                <div id="deleteModal" class="modal fade"  >
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header" style="background-color: indianred">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Confirmation </h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p> Are you sure?</p>
 
-                                            {{--</div>--}}
-                                            {{--<div class="modal-footer">--}}
-                                                {{--<button type="button" class="btn btn-danger" data-dismiss="modal"  @click="deleteUser(user_id)">@lang('Yes')</button>--}}
-                                                {{--<button type="button" class="btn btn-primary" data-dismiss="modal">@lang('No')</button>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"  @click="deleteUser(item_category_id)">@lang('Yes')</button>
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">@lang('No')</button>
+                                            </div>
+                                        </div>
 
-                                    {{--</div>--}}
-                                {{--</div>--}}
+                                    </div>
+                                </div>
 
-                            {{--</td>--}}
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -69,19 +69,19 @@
                     <div v-if="pagination.total > pagination.per_page" class="col-md-offset-4">
                         <ul class="pagination">
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getUserList(pagination.first_page_url)" href="#">First Page</a>
+                                <a @click.prevent="getItemCategoryList(pagination.first_page_url)" href="#">First Page</a>
                             </li>
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getUserList(pagination.prev_page_url)" href="#">Previous</a>
+                                <a @click.prevent="getItemCategoryList(pagination.prev_page_url)" href="#">Previous</a>
                             </li>
                             <li v-for="n in pagination.last_page" :class="{active:pagination.current_page==n}"  v-if="n<=pagination.current_page+3&&n>=pagination.current_page-3">
-                                <a @click.prevent="getUserList('users?page='+n)" href="#">@{{ n }}</a>
+                                <a @click.prevent="getItemCategoryList('item-categories?page='+n)" href="#">@{{ n }}</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getUserList(pagination.next_page_url)" href="#">Next</a>
+                                <a @click.prevent="getItemCategoryList(pagination.next_page_url)" href="#">Next</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getUserList(pagination.last_page_url)" href="#">Last Page</a>
+                                <a @click.prevent="getItemCategoryList(pagination.last_page_url)" href="#">Last Page</a>
                             </li>
                         </ul>
                     </div>
@@ -103,8 +103,8 @@
                 total:0,
                 itemCategories:[],
                 aItemCategory:{},
-                newUser:{},
-                user_id:'',
+                newItemCategory:{},
+                item_category_id:'',
                 pagination:{},
                 errors:[],
             },
@@ -125,11 +125,48 @@
                     })
                 },
 
-                {{--createUser(){--}}
-                    {{--axios.post('{{ route('users.store') }}', this.newUser).then(response=>{--}}
+                createItemCategory(){
+                    axios.post('{{ route('itemCategory.store') }}', this.newItemCategory).then(response=>{
+                        this.errors = [];
+                        this.newContent ='';
+                        this.getItemCategoryList();
+                        this.$toasted.success("Successfully Created Item Category",{
+                            position: 'top-center',
+                            theme: 'bubble',
+                            duration: 6000,
+                            action : {
+                                text : 'Close',
+                                onClick : (e, toastObject) => {
+                                    toastObject.goAway(0);
+                                }
+                            },
+                        });
+                    }).catch(error=>{
+                        if(error.response.status !== 422){
+                            let errorMsg = error.response.data.message;
+                            this.$toasted.error(errorMsg,{
+                                position: 'top-center',
+                                theme: 'bubble',
+                                duration: 6000,
+                                action : {
+                                    text : 'Close',
+                                    onClick : (e, toastObject) => {
+                                        toastObject.goAway(0);
+                                    }
+                                },
+                            });
+                        }
+                        else
+                            this.errors = error.response.data.messages;
+                    });
+                },
+
+                editItemCategory(id){
+                    console.log(this.aItemCategory)
+                    {{--axios.post('{{ route('itemCategory.update') }}/'+id, this.aItemCategory).then(response=>{--}}
                         {{--this.errors = [];--}}
-                        {{--this.getUserList();--}}
-                        {{--this.$toasted.success("Successfully Registered User",{--}}
+                        {{--this.getItemCategoryList();--}}
+                        {{--this.$toasted.success("Successfully Updated Item Category",{--}}
                             {{--position: 'top-center',--}}
                             {{--theme: 'bubble',--}}
                             {{--duration: 6000,--}}
@@ -158,52 +195,17 @@
                         {{--else--}}
                             {{--this.errors = error.response.data.messages;--}}
                     {{--});--}}
-                {{--},--}}
+                },
+                editClickAction(id, itemCategoryObj){
+                    this.item_category_id = id;
+                    this.aItemCategory = JSON.parse(JSON.stringify(itemCategoryObj)); // deep cloning of object avoiding shallow copy of object reference
+                },
 
-                {{--editUser(id){--}}
-                    {{--axios.put('{{ route('users.index') }}/'+id, this.aUser).then(response=>{--}}
+                deleteUser(id){
+                    {{--axios.post('{{ route('itemCategory.destroy') }}/'+id, {_method:'delete'}).then(response=>{--}}
                         {{--this.errors = [];--}}
-                        {{--this.getUserList();--}}
-                        {{--this.$toasted.success("Successfully Updated User",{--}}
-                            {{--position: 'top-center',--}}
-                            {{--theme: 'bubble',--}}
-                            {{--duration: 6000,--}}
-                            {{--action : {--}}
-                                {{--text : 'Close',--}}
-                                {{--onClick : (e, toastObject) => {--}}
-                                    {{--toastObject.goAway(0);--}}
-                                {{--}--}}
-                            {{--},--}}
-                        {{--});--}}
-                    {{--}).catch(error=>{--}}
-                        {{--if(error.response.status !== 422){--}}
-                            {{--let errorMsg = error.response.data.message;--}}
-                            {{--this.$toasted.error(errorMsg,{--}}
-                                {{--position: 'top-center',--}}
-                                {{--theme: 'bubble',--}}
-                                {{--duration: 6000,--}}
-                                {{--action : {--}}
-                                    {{--text : 'Close',--}}
-                                    {{--onClick : (e, toastObject) => {--}}
-                                        {{--toastObject.goAway(0);--}}
-                                    {{--}--}}
-                                {{--},--}}
-                            {{--});--}}
-                        {{--}--}}
-                        {{--else--}}
-                            {{--this.errors = error.response.data.messages;--}}
-                    {{--});--}}
-                {{--},--}}
-                {{--editClickAction(id, userObj){--}}
-                    {{--this.user_id = id;--}}
-                    {{--this.aUser = JSON.parse(JSON.stringify(userObj)); // deep cloning of object avoiding shallow copy of object reference--}}
-                {{--},--}}
-
-                {{--deleteUser(id){--}}
-                    {{--axios.post('{{ route('users.index') }}/'+id, {_method:'delete'}).then(response=>{--}}
-                        {{--this.errors = [];--}}
-                        {{--this.getUserList();--}}
-                        {{--this.$toasted.success("Successfully Deleted User",{--}}
+                        {{--this.getItemCategoryList();--}}
+                        {{--this.$toasted.success("Successfully Deleted Item Category",{--}}
                             {{--position: 'top-center',--}}
                             {{--theme: 'bubble',--}}
                             {{--duration: 6000,--}}
@@ -228,7 +230,7 @@
                             {{--},--}}
                         {{--});--}}
                     {{--})--}}
-                {{--},--}}
+                },
             }
         });
     </script>
