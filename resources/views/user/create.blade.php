@@ -26,14 +26,14 @@
                     <div class="form-group">
                         <label for="address">Type</label>
                         <select class="form-control" v-model="newUser.type">
-                            <option>-- Select Type --</option>
-                            <option value="user" :selected="newUser.type=='user'">User</option>
-                            <option value="admin" :selected="newUser.type=='admin'">Admin</option>
+                            <option value="">-- Select Type --</option>
+                            <option value="user" >User</option>
+                            <option value="admin">Admin</option>
                         </select>
-                        <div class="form-group">
-                            <label for="address">Address</label>
-                            <input type="text" class="form-control" v-model="newUser.address">
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" v-model="newUser.address">
                     </div>
                 </form>
             </div>

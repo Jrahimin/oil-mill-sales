@@ -15,10 +15,16 @@ Route::get('test',function (){
    dd(now()->format('Y-m-d'));
 });
 
-Route::get('/', 'HomeController@index')->name('home');
+Route::middleware(['auth'])->group(function (){
+    Route::get('/', 'HomeController@index')->name('home');
 
-Route::resource('users', 'UserController')->middleware('auth');
+    Route::resource('users', 'UserController');
 
-Route::resource('item-categories','ItemCategoryController')->middleware('auth');
+    Route::resource('item-categories','ItemCategoryController');
+
+    Route::resource('sales', 'SaleController');
+
+    Route::resource('stocks', 'StockController');
+});
 
 Auth::routes();
