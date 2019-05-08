@@ -19,6 +19,7 @@ class CreateStocksTable extends Migration
             $table->foreign('item_id')->references('id')->on('items')->onDelete('restrict');
             $table->unsignedInteger('user_id');
             $table->integer('no_of_items');
+            $table->integer('sold');
             $table->double('price');
             $table->tinyInteger('status')->default(1);
             $table->date('stock_date')->default(now()->format('Y-m-d'));
