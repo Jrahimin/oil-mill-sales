@@ -21,7 +21,7 @@ class SalePackage extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
-    /*public function customer(){
+    public function customer(){
         return $this->belongsTo(Customer::class);
-    }*/
+    }
 }
