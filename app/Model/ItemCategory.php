@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ItemCategory extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $fillable = ['name'];
 
     public function items(){
         return $this->hasMany(Item::class,'category_id','id');
