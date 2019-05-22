@@ -53,10 +53,10 @@ class ItemController extends Controller
     public function store(ItemCategoryStoreRequest $request)
     {
         try {
-            $request['user_id'] = auth()->user()->id() ;
-            Item::create($request);
-        }catch (\Exception $e)
-        {
+            $request['user_id'] = auth()->user()->id;
+            Item::create($request->all());
+        }
+        catch (\Exception $e) {
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
             return $this->exceptionResponse('Something Went Wrong');
         }

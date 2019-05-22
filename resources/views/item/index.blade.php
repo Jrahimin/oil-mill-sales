@@ -35,10 +35,10 @@
                         <tbody>
                         <tr v-for="item in items" >
                             <td>@{{ item.title }}</td>
-                            <td>@{{ item.model }}</td>
-                            <td>@{{ item.company }}</td>
-                            <td>@{{ item.item_category.name }}</td>
-                            <td>@{{ item.serial_no }}</td>
+                            <td>@{{ item.model ? item.model : 'N/A'  }}</td>
+                            <td>@{{ item.company ? item.company : 'N/A' }}</td>
+                            <td>@{{ item.category ? item.category.name : 'N/A' }}</td>
+                            <td>@{{ item.serial_no ? item.serial_no : 'N/A'  }}</td>
                             <td>
                                 {{--@if(auth()->user()->type=='admin')--}}
                                     {{--<a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(stock.id, stock)">Edit</a>--}}
@@ -127,12 +127,12 @@
 
                     axios.get(pageUrl).then(response=> {
                         console.log(response.data)
-                        that.items = response.data.items;
+                        that.items = response.data.items.data;
                         that.categories = response.data.itemCategories ;
-                        that.pagination = response.data;
+                        that.pagination = response.data.items;
                         that.total = that.pagination.total;
 
-                        console.log(response.data)
+                        console.log(that.pagination);
                     })
                 },
 
