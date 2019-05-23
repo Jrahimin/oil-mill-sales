@@ -15,9 +15,9 @@ class CreateStocksTable extends Migration
     {
         Schema::create('stocks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('item_id')->index();
+            $table->unsignedBigInteger('item_id')->index();
             $table->foreign('item_id')->references('id')->on('items')->onDelete('restrict');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
             $table->integer('no_of_items');
             $table->integer('sold');
             $table->double('price');

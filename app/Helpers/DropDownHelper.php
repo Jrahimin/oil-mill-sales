@@ -7,3 +7,11 @@ if (!function_exists('__itemDropdown')) {
         return ($items ? $items->toArray() : []);
     }
 }
+
+if (!function_exists('__itemCategoryDropdown')) {
+    function __itemCategoryDropdown()
+    {
+        $itemcategories = \App\Model\ItemCategory::pluck('name', 'id');
+        return ($itemcategories ? $itemcategories->toArray() : []);
+    }
+}

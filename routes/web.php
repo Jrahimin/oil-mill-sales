@@ -25,6 +25,8 @@ Route::middleware(['auth'])->group(function (){
     Route::resource('sales', 'SaleController');
 
     Route::resource('stocks', 'StockController');
+
+    Route::resource('items','ItemController');
 });
 
 Auth::routes();
