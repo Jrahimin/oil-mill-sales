@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Item\ItemStoreRequest;
 use App\Http\Requests\ItemCategory\ItemCategoryStoreRequest;
 use App\Model\Item;
 use Illuminate\Http\Request;
@@ -50,10 +51,11 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ItemCategoryStoreRequest $request)
+    public function store(ItemStoreRequest $request)
     {
         try {
             $request['user_id'] = auth()->user()->id;
+
             Item::create($request->all());
         }
         catch (\Exception $e) {
@@ -93,7 +95,16 @@ class ItemController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            if(auth()->user()->type != 'admin')
+                return $this->exceptionResponse('You are not allowed to update item',401);
+
+            Item::findOrFail($id)->update($request->all());
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**
@@ -104,7 +115,20 @@ class ItemController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try
+        {
+            if(auth()->user()->type != 'admin')
+            {
+                return $this->exceptionResponse('You are not allowed to delete item ',401);
+            }
+            Item::destroy($id);
+            return $this->successResponseWithMsg('Successfully deleted item');
+        }
+        catch (\Exception $e)
+        {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something went wrong');
+        }
     }
 
 

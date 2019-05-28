@@ -27,7 +27,6 @@ class ItemStoreRequest extends FormRequest
     {
         return [
             'category_id'=>'required',
-            'user_id' => 'required',
             'title' => 'required'
         ];
     }
