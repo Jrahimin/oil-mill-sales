@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Item;
+use App\Model\Stock;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {
@@ -13,9 +16,33 @@ class SaleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
+        return view('sale.index');
+    }
 
+    public function getItemsForCategory($categoryId)
+    {
+        try{
+            $items = Item::where('category_id', $categoryId)->get();
+            return $this->successResponse($items);
+        }
+        catch(\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
+    }
+
+    public function getStocks($itemId)
+    {
+        try{
+            $stocks = Stock::where('status', 1)->where('item_id', $itemId)->where('no_of_items', '>', 0)->get();
+            return $this->successResponse($stocks);
+        }
+        catch(\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**

@@ -57,6 +57,7 @@ class StockController extends Controller
                 return $this->exceptionResponse('You are not allowed to add stock',401);
 
             $request['user_id'] = auth()->user()->id;
+            $request['sold'] = 1;
             Stock::create($request->all());
 
             return $this->successResponseWithMsg('Item Added to stock Successfully');
