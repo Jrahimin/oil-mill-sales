@@ -29,6 +29,7 @@ class StockStoreRequest extends FormRequest
             'item_id' => 'required|integer',
             'no_of_items' => 'required|integer',
             'price' => 'required|numeric',
+            'sale_price' => 'nullable|numeric',
         ];
     }
 

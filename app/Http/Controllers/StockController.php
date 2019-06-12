@@ -20,10 +20,11 @@ class StockController extends Controller
     public function index(Request $request)
     {
         try{
+            //dd(Stock::with('item.category', 'user')->limit(2)->get());
             if(!$request->wantsJson())
                 return view('stock.index');
 
-            $data['stocks'] = Stock::with('item', 'user')->paginate(2);
+            $data['stocks'] = Stock::with('item.category', 'user')->paginate(2);
             $data['items'] = __itemDropdown();
 
             return $this->successResponse($data);

@@ -28,6 +28,7 @@ class StockUpdateRequest extends FormRequest
         return [
             'no_of_items' => 'required|integer',
             'price' => 'required|numeric',
+            'sale_price' => 'nullable|numeric',
         ];
     }
 

@@ -24,7 +24,7 @@ class SaleController extends Controller
     public function getItemsForCategory($categoryId)
     {
         try{
-            $items = Item::where('category_id', $categoryId)->get();
+            $items = Item::where('category_id', $categoryId)->has('stocks')->get();
             return $this->successResponse($items);
         }
         catch(\Exception $e){
@@ -38,6 +38,19 @@ class SaleController extends Controller
         try{
             $stocks = Stock::where('status', 1)->where('item_id', $itemId)->where('no_of_items', '>', 0)->get();
             return $this->successResponse($stocks);
+        }
+        catch(\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
+    }
+
+    public function getSalePrice($stockId)
+    {
+        try{
+            $stock = Stock::findOrFail($stockId);
+
+            return $this->successResponse($stock->sale_price);
         }
         catch(\Exception $e){
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());

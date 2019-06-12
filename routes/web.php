@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function (){
 
     Route::get('category/{categoryId}/items', 'SaleController@getItemsForCategory');
     Route::get('item/{itemId}/stocks', 'SaleController@getStocks');
+    Route::get('stock/{stockId}/sale-price', 'SaleController@getSalePrice');
 
 });
 

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Stock extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    protected $fillable = ['item_id', 'user_id', 'no_of_items', 'price', 'status', 'stock_date', 'sold'];
+    protected $fillable = ['item_id', 'user_id', 'no_of_items', 'price', 'sale_price', 'status', 'stock_date', 'sold'];
     protected $appends = ['stock_status', 'remaining'];
 
     public function item(){

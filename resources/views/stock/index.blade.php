@@ -21,11 +21,14 @@
                     <table class="table table-responsive table-hover table-striped">
                         <thead>
                         <tr>
-                            <th>Item</th>
+                            <th>Category</th>
+                            <th>ItemName</th>
                             <th>NoOfItems</th>
+                            <th>Sold</th>
                             @if(auth()->user()->type=='admin')
                                 <th>UnitPrice</th>
                             @endif
+                            <th>SalePrice</th>
                             <th>status</th>
                             <th>stockedBy</th>
                             <th>StockDate</th>
@@ -37,11 +40,14 @@
 
                         <tbody>
                         <tr v-for="stock in stocks" >
+                            <td>@{{ stock.item.category.name }}</td>
                             <td>@{{ stock.item.title }}</td>
                             <td>@{{ stock.no_of_items }}</td>
+                            <td>@{{ stock.sold }}</td>
                             @if(auth()->user()->type=='admin')
                                 <td>@{{ stock.price }} </td>
                             @endif
+                            <td>@{{ stock.sale_price }} </td>
                             <td>@{{ stock.stock_status }}</td>
                             <td>@{{ stock.user.name }}</td>
                             <td>@{{ stock.stock_date }}</td>
