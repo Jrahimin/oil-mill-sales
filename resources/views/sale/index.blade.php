@@ -14,7 +14,7 @@
                             <label for="address">Item Category</label>
                             <select class="form-control" v-model="sale.category_id" @change="getItems(sale.category_id)">
                                 <option value="">-- Select Item Category --</option>
-                                <option v-for="(category, index) in categories" :value="index">@{{ category }}</option>
+                                <option v-for="(category, id) in categories" :value="id">@{{ category }}</option>
                             </select>
                         </div>
 
@@ -63,41 +63,20 @@
                     <table class="table table-responsive table-hover table-striped">
                         <thead>
                         <tr>
-                            <th>Category</th>
                             <th>ItemName</th>
-                            <th>NoOfItems</th>
                             <th>Price</th>
+                            <th>NoOfItems</th>
                             <th>Action</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        <tr v-for="sale in saleList" >
-                            <td>@{{ sale.sale_price }}</td>
-                            <td>@{{ sale.category_id }}</td>
-                            <td>@{{ sale.item_id }}</td>
-                            <td>@{{ sale.stock_id }} </td>
+                        <tr v-for="(sale, index) in saleList" >
+                            <td>@{{ sale.item.title }}</td>
+                            <td>@{{ sale.sale_price }} </td>
                             <td>@{{ sale.no_of_items }}</td>
                             <td>
-                                {{--<a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="stock_id=stock.id">@lang('Delete')</a>
-
-                                <div id="deleteModal" class="modal fade"  >
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color: indianred">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Confirmation </h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p> Are you sure?</p>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal"  @click="deleteStock(stock_id)">@lang('Yes')</button>
-                                                <button type="button" class="btn btn-primary" data-dismiss="modal">@lang('No')</button>
-                                            </div>
-                                        </div>
-                                    </div>--}}
+                                <a href="#" class="btn btn-sm btn-danger" @click="saleList.splice(index, 1)"><span><i class="fa fa-minus"></i></span></a>
                             </td>
                         </tr>
                         </tbody>
@@ -124,6 +103,8 @@
                     item_id:'',
                     stock_id:'',
                     no_of_items:'',
+                    item:'',
+                    category_name:'',
                 },
                 saleList:[],
                 errors:[],
@@ -143,6 +124,10 @@
                     })
                 },
                 getStocks(itemId) {
+                    let item = this.items.filter(item=> item.id == itemId);
+                    this.sale.item = item[0];
+                    console.log(item)
+
                     axios.get('item/'+itemId+'/stocks').then(response=> {
                         this.stocks = response.data;
                     })

@@ -23,6 +23,10 @@
                         <input type="text" class="form-control" v-model="newStock.price">
                     </div>
                     <div class="form-group">
+                        <label for="price">Sale Price</label>
+                        <input type="text" class="form-control" v-model="aStock.sale_price">
+                    </div>
+                    <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" v-model="newStock.status">
                             <option value="1">Active</option>
