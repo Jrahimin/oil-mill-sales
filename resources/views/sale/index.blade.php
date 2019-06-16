@@ -106,6 +106,7 @@
                     item:'',
                     category_name:'',
                 },
+                stock_remaining:'',
                 saleList:[],
                 errors:[],
             },
@@ -124,20 +125,30 @@
                     })
                 },
                 getStocks(itemId) {
-                    let item = this.items.filter(item=> item.id == itemId);
-                    this.sale.item = item[0];
-                    console.log(item)
+                    let item = this.items.filter(item=> item.id == itemId)[0];
+                    this.sale.item = item;
 
                     axios.get('item/'+itemId+'/stocks').then(response=> {
                         this.stocks = response.data;
                     })
                 },
                 getSalePrice(stockId) {
+                    let stock = this.stocks.filter(stock=> stock.id == stockId)[0];
+                    this.stock_remaining = stock.no_of_items - stock.sold;
+
                     axios.get('stock/'+ stockId +'/sale-price').then(response=> {
                         this.sale.sale_price = response.data;
                     })
                 },
                 AddToBucket(){
+                    if(parseInt(this.stock_remaining) < parseInt(this.sale.no_of_items)){
+                        alert("Not enough in stock");
+                        return;
+                    }
+                    if(!this.sale.item_id || !this.sale.sale_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.no_of_items){
+                        alert("please provide all the sales info");
+                        return;
+                    }
                     this.saleList.push(this.sale);
                 },
 
