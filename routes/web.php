@@ -22,11 +22,11 @@ Route::middleware(['auth'])->group(function (){
 
     Route::resource('item-categories','ItemCategoryController');
 
-    Route::resource('sales', 'SaleController');
-
     Route::resource('stocks', 'StockController');
 
     Route::resource('items','ItemController');
+
+    Route::resource('sales', 'SaleController');
 
     Route::get('category/{categoryId}/items', 'SaleController@getItemsForCategory');
     Route::get('item/{itemId}/stocks', 'SaleController@getStocks');

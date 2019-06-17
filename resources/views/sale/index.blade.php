@@ -50,7 +50,6 @@
                     </form>
                 </div>
             </div>
-            @include('errors.ajax_error')
         </div>
 
         <div class="col-md-10 col-md-offset-1">
@@ -83,7 +82,13 @@
                     </table>
                 </div>
             </div>
+            <div class="pull-right" v-if="saleList.length">
+                <button class="btn btn-primary" @click.prevent="sellItem">Submit</button>
+            </div>
+            <br/><hr>
+            @include('errors.ajax_error')
         </div>
+        <div class="clearfix"></div>
     </div>
 @endsection
 
@@ -149,11 +154,13 @@
                         alert("please provide all the sales info");
                         return;
                     }
-                    this.saleList.push(this.sale);
+                    this.saleList.push(JSON.parse(JSON.stringify(this.sale)));
                 },
 
-                /*sale(){
-                    axios.post('{{ route('items.store') }}', this.newItem).then(response=>{
+                sellItem(){
+                    axios.post('{{ route('sales.store') }}', this.saleList).then(response=>{
+                        console.log(response.data);
+                        return;
                         this.errors = [];
                         this.getItemList();
                         this.$toasted.success("Successfully added item",{
@@ -185,7 +192,7 @@
                         else
                             this.errors = error.response.data.messages;
                     });
-                },*/
+                },
             }
         });
     </script>

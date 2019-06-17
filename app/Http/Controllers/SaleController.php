@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Model\Item;
+use App\Model\SalePackage;
 use App\Model\Stock;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
@@ -76,7 +80,30 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        foreach ($data as $aData)
+        {
+            $validator = Validator::make($aData,[
+                'sale_price' => 'required|numeric',
+                'item_id' => 'required|integer',
+                'category_id' => 'required|integer',
+                'stock_id' => 'required|integer',
+                'no_of_items' => 'required|integer',
+            ]);
+
+            if($validator->fails()){
+                throw new HttpResponseException(response()->json([
+                    'messages' => $validator->errors()->all(),
+                ], 422));
+            }
+        }
+
+        $lastSalePackId = SalePackage::latest()->id;
+        $request['user_id'] = $request->user()->id;
+        $request['customer_id'] = 1;
+        $request['serial_no'] = ($lastSalePackId+1)."-".Str::random(3);
+
+        return response()->json($data);
     }
 
     /**
