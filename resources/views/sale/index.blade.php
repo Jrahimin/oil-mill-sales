@@ -11,6 +11,14 @@
                 <div class="panel-body">
                     <form>
                         <div class="form-group col-md-8">
+                            <label for="address">Customers</label>
+                            <select class="form-control" v-model="customer_id">
+                                <option value="">-- Select Customer --</option>
+                                <option v-for="(customer, id) in customers" :value="id">@{{ customer }}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-8">
                             <label for="address">Item Category</label>
                             <select class="form-control" v-model="sale.category_id" @change="getItems(sale.category_id)">
                                 <option value="">-- Select Item Category --</option>
@@ -34,8 +42,8 @@
                             </select>
                         </div>
                         <div class="form-group col-md-8">
-                            <label for="sale_price">Sale Price</label>
-                            <input type="text" class="form-control" v-model="sale.sale_price">
+                            <label for="unit_price">Sale Price</label>
+                            <input type="text" class="form-control" v-model="sale.unit_price">
                         </div>
                         <div class="form-group col-md-8">
                             <label for="no_of_items">No Of Items</label>
@@ -45,7 +53,7 @@
                         <div class="form-group col-md-8">
                             <button type="button" class="btn btn-primary pull-right" @click.prevent="AddToBucket">Add to Bucket</button>
                             <div style="width: 10px;" class="pull-right">&nbsp;</div>
-                            <button type="button" class="btn btn-danger pull-right" @click.prevent="sale={sale_price:'',category_id:'',item_id:'',stock_id:'',no_of_items:''}">Clear</button>
+                            <button type="button" class="btn btn-danger pull-right" @click.prevent="sale={unit_price:'',category_id:'',item_id:'',stock_id:'',no_of_items:''}">Clear</button>
                         </div>
                     </form>
                 </div>
@@ -72,7 +80,7 @@
                         <tbody>
                         <tr v-for="(sale, index) in saleList" >
                             <td>@{{ sale.item.title }}</td>
-                            <td>@{{ sale.sale_price }} </td>
+                            <td>@{{ sale.unit_price }} </td>
                             <td>@{{ sale.no_of_items }}</td>
                             <td>
                                 <a href="#" class="btn btn-sm btn-danger" @click="saleList.splice(index, 1)"><span><i class="fa fa-minus"></i></span></a>
@@ -100,10 +108,12 @@
 
             data:{
                 categories: {!! json_encode(__itemCategoryDropdown()) !!},
+                customers: {!! json_encode(__customerDropdown()) !!},
+                customer_id:'',
                 items:[],
                 stocks:[],
                 sale:{
-                    sale_price:'',
+                    unit_price:'',
                     category_id:'',
                     item_id:'',
                     stock_id:'',
@@ -116,12 +126,16 @@
                 errors:[],
             },
 
+            created(){
+                console.log(this.customers)
+            },
+
             methods:{
                 getItems(categoryId) {
                     axios.get('category/'+categoryId+'/items').then(response=> {
                         this.items = response.data;
                         this.sale = {
-                            sale_price:'',
+                            unit_price:'',
                             category_id:categoryId,
                             item_id:'',
                             stock_id:'',
@@ -135,6 +149,7 @@
 
                     axios.get('item/'+itemId+'/stocks').then(response=> {
                         this.stocks = response.data;
+                        console.log(response.data);
                     })
                 },
                 getSalePrice(stockId) {
@@ -142,7 +157,7 @@
                     this.stock_remaining = stock.no_of_items - stock.sold;
 
                     axios.get('stock/'+ stockId +'/sale-price').then(response=> {
-                        this.sale.sale_price = response.data;
+                        this.sale.unit_price = response.data;
                     })
                 },
                 AddToBucket(){
@@ -150,7 +165,7 @@
                         alert("Not enough in stock");
                         return;
                     }
-                    if(!this.sale.item_id || !this.sale.sale_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.no_of_items){
+                    if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.no_of_items){
                         alert("please provide all the sales info");
                         return;
                     }
@@ -158,12 +173,10 @@
                 },
 
                 sellItem(){
-                    axios.post('{{ route('sales.store') }}', this.saleList).then(response=>{
+                    axios.post('{{ route('sales.store') }}', {"customer_id":this.customer_id, "sale_list":this.saleList}).then(response=>{
                         console.log(response.data);
-                        return;
                         this.errors = [];
-                        this.getItemList();
-                        this.$toasted.success("Successfully added item",{
+                        this.$toasted.success("Successful Sale",{
                             position: 'top-center',
                             theme: 'bubble',
                             duration: 6000,

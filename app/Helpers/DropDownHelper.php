@@ -15,3 +15,11 @@ if (!function_exists('__itemCategoryDropdown')) {
         return ($itemcategories ? $itemcategories->toArray() : []);
     }
 }
+
+if (!function_exists('__customerDropdown')) {
+    function __customerDropdown()
+    {
+        $customers = \App\Model\Customer::selectRaw("CONCAT(name,' - ',mobile_no) as name, id")->pluck('name', 'id');
+        return ($customers ? $customers->toArray() : []);
+    }
+}
