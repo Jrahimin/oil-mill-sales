@@ -23,3 +23,11 @@ if (!function_exists('__customerDropdown')) {
         return ($customers ? $customers->toArray() : []);
     }
 }
+
+if (!function_exists('__itemUnitDropdown')) {
+    function __itemUnitDropdown()
+    {
+        $itemUnits = \App\Model\ItemUnit::pluck('name', 'id');
+        return ($itemUnits ? $itemUnits->toArray() : []);
+    }
+}

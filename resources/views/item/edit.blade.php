@@ -16,7 +16,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="no_of_items">Titel</label>
+                        <label for="quantity">Titel</label>
                         <input type="text" class="form-control" v-model="anItem.title">
                     </div>
                     <div class="form-group">

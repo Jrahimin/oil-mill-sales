@@ -15,8 +15,23 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="no_of_items">No of Items</label>
-                        <input type="text" class="form-control" v-model="newStock.no_of_items">
+                        <label for="quantity">Unit</label>
+                        <select class="form-control" v-model="newStock.item_unit_id">
+                            <option value="">-- Select Unit --</option>
+                            <option v-for="(unit, id) in units" :value="id">@{{ unit }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantity</label>
+                        <input type="text" class="form-control" v-model="newStock.quantity">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">No of Jar</label>
+                        <input type="text" class="form-control" v-model="newStock.no_of_jar">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">No of Drum</label>
+                        <input type="text" class="form-control" v-model="newStock.no_of_drum">
                     </div>
                     <div class="form-group">
                         <label for="price">Unit Price</label>
@@ -24,7 +39,7 @@
                     </div>
                     <div class="form-group">
                         <label for="price">Sale Price</label>
-                        <input type="text" class="form-control" v-model="aStock.sale_price">
+                        <input type="text" class="form-control" v-model="newStock.sale_price">
                     </div>
                     <div class="form-group">
                         <label for="status">Status</label>

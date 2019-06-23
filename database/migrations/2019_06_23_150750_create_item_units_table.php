@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFieldToStock extends Migration
+class CreateItemUnitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddFieldToStock extends Migration
      */
     public function up()
     {
-        Schema::table('stocks', function (Blueprint $table) {
-            $table->double('sale_price')->default(0)->after('price');
+        Schema::create('item_units', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name',100);
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddFieldToStock extends Migration
      */
     public function down()
     {
-        Schema::table('stocks', function (Blueprint $table) {
-            $table->dropColumn('sale_price');
-        });
+        Schema::dropIfExists('item_units');
     }
 }

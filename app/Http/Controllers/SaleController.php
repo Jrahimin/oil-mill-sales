@@ -42,9 +42,9 @@ class SaleController extends Controller
     public function getStocks($itemId)
     {
         try{
-            $stocks = Stock::where('status', 1)->where('item_id', $itemId)->where('no_of_items', '>', 0)->get()
+            $stocks = Stock::where('status', 1)->where('item_id', $itemId)->where('quantity', '>', 0)->get()
                 ->filter(function ($stock){
-                    return $stock->no_of_items - $stock->sold > 0;
+                    return $stock->quantity - $stock->sold > 0;
                 });
             
             return $this->successResponse($stocks);
@@ -108,14 +108,14 @@ class SaleController extends Controller
                     "sale_package_id" => $salePack->id,
                     "item_id" => $sale['item_id'],
                     "stock_id" => $sale['stock_id'],
-                    "no_of_items" => $sale['no_of_items'],
+                    "quantity" => $sale['quantity'],
                     "unit_price" => $sale['unit_price'],
-                    "total_price" => $sale['unit_price'] * $sale['no_of_items'],
+                    "total_price" => $sale['unit_price'] * $sale['quantity'],
                 );
 
                 $saleData[] = $data;
 
-                Stock::findOrFail($sale['stock_id'])->increment('sold', $sale['no_of_items']);
+                Stock::findOrFail($sale['stock_id'])->increment('sold', $sale['quantity']);
             }
 
             Sale::insert($saleData);
@@ -198,7 +198,7 @@ class SaleController extends Controller
                 'item_id' => 'required|integer',
                 'category_id' => 'required|integer',
                 'stock_id' => 'required|integer',
-                'no_of_items' => 'required|integer',
+                'quantity' => 'required|integer',
             ]);
 
             if($validator->fails()){

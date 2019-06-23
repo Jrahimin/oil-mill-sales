@@ -8,7 +8,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="no_of_items">Name</label>
+                        <label for="quantity">Name</label>
                         <input type="text" class="form-control" v-model="newCustomer.name">
                     </div>
                     <div class="form-group">

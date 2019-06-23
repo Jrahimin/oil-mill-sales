@@ -15,7 +15,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="no_of_items">Title</label>
+                        <label for="quantity">Title</label>
                         <input type="text" class="form-control" v-model="newItem.title">
                     </div>
                     <div class="form-group">

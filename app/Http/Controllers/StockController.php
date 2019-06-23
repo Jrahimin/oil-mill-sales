@@ -24,7 +24,7 @@ class StockController extends Controller
             if(!$request->wantsJson())
                 return view('stock.index');
 
-            $data['stocks'] = Stock::with('item.category', 'user')->paginate(2);
+            $data['stocks'] = Stock::with('item.category', 'user', 'item_unit')->paginate(2);
             $data['items'] = __itemDropdown();
 
             return $this->successResponse($data);
@@ -58,7 +58,6 @@ class StockController extends Controller
                 return $this->exceptionResponse('You are not allowed to add stock',401);
 
             $request['user_id'] = auth()->user()->id;
-            $request['sold'] = 1;
             Stock::create($request->all());
 
             return $this->successResponseWithMsg('Item Added to stock Successfully');

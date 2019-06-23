@@ -46,14 +46,24 @@
                             <input type="text" class="form-control" v-model="sale.unit_price">
                         </div>
                         <div class="form-group col-md-8">
-                            <label for="no_of_items">No Of Items</label>
-                            <input type="text" class="form-control" v-model="sale.no_of_items">
+                            <label for="quantity">Quantity</label>
+                            <input type="text" class="form-control" v-model="sale.quantity">
+                        </div>
+
+                        <div class="form-group col-md-8">
+                            <label for="quantity">No of Jar</label>
+                            <input type="text" class="form-control" v-model="sale.no_of_jar">
+                        </div>
+
+                        <div class="form-group col-md-8">
+                            <label for="quantity">No of Drum</label>
+                            <input type="text" class="form-control" v-model="sale.no_of_drum">
                         </div>
 
                         <div class="form-group col-md-8">
                             <button type="button" class="btn btn-primary pull-right" @click.prevent="AddToBucket">Add to Bucket</button>
                             <div style="width: 10px;" class="pull-right">&nbsp;</div>
-                            <button type="button" class="btn btn-danger pull-right" @click.prevent="sale={unit_price:'',category_id:'',item_id:'',stock_id:'',no_of_items:''}">Clear</button>
+                            <button type="button" class="btn btn-danger pull-right" @click.prevent="sale={unit_price:'',category_id:'',item_id:'',stock_id:'',quantity:''}">Clear</button>
                         </div>
                     </form>
                 </div>
@@ -72,7 +82,7 @@
                         <tr>
                             <th>ItemName</th>
                             <th>Price</th>
-                            <th>NoOfItems</th>
+                            <th>Quantity</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -81,7 +91,7 @@
                         <tr v-for="(sale, index) in saleList" >
                             <td>@{{ sale.item.title }}</td>
                             <td>@{{ sale.unit_price }} </td>
-                            <td>@{{ sale.no_of_items }}</td>
+                            <td>@{{ sale.quantity }}</td>
                             <td>
                                 <a href="#" class="btn btn-sm btn-danger" @click="saleList.splice(index, 1)"><span><i class="fa fa-minus"></i></span></a>
                             </td>
@@ -117,7 +127,9 @@
                     category_id:'',
                     item_id:'',
                     stock_id:'',
-                    no_of_items:'',
+                    quantity:'',
+                    no_of_jar:0,
+                    no_of_drum:0,
                     item:'',
                     category_name:'',
                 },
@@ -139,7 +151,9 @@
                             category_id:categoryId,
                             item_id:'',
                             stock_id:'',
-                            no_of_items:'',
+                            quantity:'',
+                            no_of_jar:0,
+                            no_of_drum:0,
                         };
                     })
                 },
@@ -154,18 +168,18 @@
                 },
                 getSalePrice(stockId) {
                     let stock = this.stocks.filter(stock=> stock.id == stockId)[0];
-                    this.stock_remaining = stock.no_of_items - stock.sold;
+                    this.stock_remaining = stock.quantity - stock.sold;
 
                     axios.get('stock/'+ stockId +'/sale-price').then(response=> {
                         this.sale.unit_price = response.data;
                     })
                 },
                 AddToBucket(){
-                    if(parseInt(this.stock_remaining) < parseInt(this.sale.no_of_items)){
+                    if(parseInt(this.stock_remaining) < parseInt(this.sale.quantity)){
                         alert("Not enough in stock");
                         return;
                     }
-                    if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.no_of_items){
+                    if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.quantity){
                         alert("please provide all the sales info");
                         return;
                     }

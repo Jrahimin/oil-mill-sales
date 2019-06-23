@@ -4,7 +4,8 @@
     <div id="stockList">
         <div class="col-md-10 col-md-offset-1">
             @if(auth()->user()->type=='admin')
-                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createStock" @click="newStock={item_id:'', status:1}">
+                <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createStock"
+                        @click="newStock={item_id:'', item_unit_id:'', status:1}">
                     <i class="fa fa-plus"> Add</i>
                 </button>
             @endif
@@ -23,7 +24,10 @@
                         <tr>
                             <th>Category</th>
                             <th>ItemName</th>
-                            <th>NoOfItems</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Jar</th>
+                            <th>Drum</th>
                             <th>Sold</th>
                             @if(auth()->user()->type=='admin')
                                 <th>UnitPrice</th>
@@ -42,7 +46,10 @@
                         <tr v-for="stock in stocks" >
                             <td>@{{ stock.item.category.name }}</td>
                             <td>@{{ stock.item.title }}</td>
-                            <td>@{{ stock.no_of_items }}</td>
+                            <td>@{{ stock.quantity }}</td>
+                            <td>@{{ stock.item_unit.name }}</td>
+                            <td>@{{ stock.no_of_jar }}</td>
+                            <td>@{{ stock.no_of_drum }}</td>
                             <td>@{{ stock.sold }}</td>
                             @if(auth()->user()->type=='admin')
                                 <td>@{{ stock.price }} </td>
@@ -119,10 +126,11 @@
 
             data:{
                 total:0,
+                units: {!! json_encode(__itemUnitDropdown()) !!},
                 stocks:[],
                 items:[],
                 aStock:{},
-                newStock:{item_id:'', status:1},
+                newStock:{item_id:'', item_unit_id:'', status:1},
                 stock_id:'',
                 pagination:{},
                 errors:[],

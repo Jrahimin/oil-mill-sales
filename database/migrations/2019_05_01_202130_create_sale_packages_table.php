@@ -19,8 +19,7 @@ class CreateSalePackagesTable extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('customer_id')->index();
             $table->unsignedInteger('vehicle_id')->nullable()->index();
-            $table->string('journey_from')->nullable();
-            $table->string('journey_to')->nullable();
+            $table->unsignedInteger('route_id')->nullable()->index();
             $table->tinyInteger('status');
             $table->timestamps();
         });

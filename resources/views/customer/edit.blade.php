@@ -9,7 +9,7 @@
                 <form>
 
                     <div class="form-group">
-                        <label for="no_of_items">Name</label>
+                        <label for="quantity">Name</label>
                         <input type="text" class="form-control" v-model="aCustomer.name">
                     </div>
                     <div class="form-group">

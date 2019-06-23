@@ -25,4 +25,8 @@ class SalePackage extends Model
     public function customer(){
         return $this->belongsTo(Customer::class);
     }
+
+    public function route(){
+        return $this->belongsTo(Route::class);
+    }
 }

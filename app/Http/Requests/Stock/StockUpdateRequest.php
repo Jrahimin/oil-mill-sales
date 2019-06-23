@@ -26,7 +26,7 @@ class StockUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'no_of_items' => 'required|integer',
+            'quantity' => 'required|integer',
             'price' => 'required|numeric',
             'sale_price' => 'nullable|numeric',
         ];
