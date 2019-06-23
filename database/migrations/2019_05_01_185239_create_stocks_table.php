@@ -22,7 +22,7 @@ class CreateStocksTable extends Migration
             $table->double('quantity');
             $table->unsignedInteger('no_of_jar')->default(0);
             $table->unsignedInteger('no_of_drum')->default(0);
-            $table->integer('sold')->default(0);
+            $table->double('sold')->default(0);
             $table->double('price');
             $table->double('sale_price')->default(0);
             $table->tinyInteger('status')->default(1);

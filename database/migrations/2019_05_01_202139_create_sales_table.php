@@ -19,6 +19,7 @@ class CreateSalesTable extends Migration
             $table->integer('item_id');
             $table->integer('stock_id');
             $table->double('quantity');
+            $table->unsignedInteger('item_unit_id');
             $table->unsignedInteger('no_of_jar')->default(0);
             $table->unsignedInteger('no_of_drum')->default(0);
             $table->double('unit_price');

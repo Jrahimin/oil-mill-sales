@@ -49,6 +49,13 @@
                             <label for="quantity">Quantity</label>
                             <input type="text" class="form-control" v-model="sale.quantity">
                         </div>
+                        <div class="form-group col-md-8">
+                            <label for="quantity">Unit</label>
+                            <select class="form-control" v-model="sale.item_unit_id">
+                                <option value="">-- Select Unit --</option>
+                                <option v-for="(unit, id) in units" :value="id">@{{ unit }}</option>
+                            </select>
+                        </div>
 
                         <div class="form-group col-md-8">
                             <label for="quantity">No of Jar</label>
@@ -119,6 +126,8 @@
             data:{
                 categories: {!! json_encode(__itemCategoryDropdown()) !!},
                 customers: {!! json_encode(__customerDropdown()) !!},
+                units: {!! json_encode(__itemUnitDropdown()) !!},
+
                 customer_id:'',
                 items:[],
                 stocks:[],
@@ -126,6 +135,7 @@
                     unit_price:'',
                     category_id:'',
                     item_id:'',
+                    item_unit_id:'',
                     stock_id:'',
                     quantity:'',
                     no_of_jar:0,
@@ -150,6 +160,7 @@
                             unit_price:'',
                             category_id:categoryId,
                             item_id:'',
+                            item_unit_id:'',
                             stock_id:'',
                             quantity:'',
                             no_of_jar:0,
@@ -175,10 +186,10 @@
                     })
                 },
                 AddToBucket(){
-                    if(parseInt(this.stock_remaining) < parseInt(this.sale.quantity)){
+                    /*if(parseInt(this.stock_remaining) < parseInt(this.sale.quantity)){
                         alert("Not enough in stock");
                         return;
-                    }
+                    }*/
                     if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.quantity){
                         alert("please provide all the sales info");
                         return;

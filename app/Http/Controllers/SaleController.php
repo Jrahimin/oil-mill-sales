@@ -6,6 +6,7 @@ use App\Model\Item;
 use App\Model\Sale;
 use App\Model\SalePackage;
 use App\Model\Stock;
+use App\Model\UnitConversion;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
@@ -109,20 +110,28 @@ class SaleController extends Controller
                     "item_id" => $sale['item_id'],
                     "stock_id" => $sale['stock_id'],
                     "quantity" => $sale['quantity'],
+                    "item_unit_id" => $sale['item_unit_id'],
+                    "no_of_jar" => $sale['no_of_jar'],
+                    "no_of_drum" => $sale['no_of_drum'],
                     "unit_price" => $sale['unit_price'],
                     "total_price" => $sale['unit_price'] * $sale['quantity'],
                 );
 
                 $saleData[] = $data;
 
-                Stock::findOrFail($sale['stock_id'])->increment('sold', $sale['quantity']);
+                // if stock unit and sale unit differs, we need to make conversion and adjust stock accordingly
+                $stock = Stock::findOrFail($sale['stock_id']);
+                $conversionRate = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->firstOrFail()->conversion_rate;
+                $quantity = $stock->item_unit_id == $sale['item_unit_id'] ? $sale['quantity'] : $sale['quantity']/$conversionRate;
+
+                $stock->increment('sold', $quantity);
             }
 
             Sale::insert($saleData);
 
             DB::commit();
 
-            return $this->successResponseWithMsg("Successful sale");
+            return $this->successResponseWithMsg("Successfully sold");
         }
         catch (\Exception $e){
             DB::rollBack();

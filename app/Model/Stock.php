@@ -32,6 +32,6 @@ class Stock extends Model
 
     public function getRemainingAttribute(){
         $remaining = $this->quantity - $this->sold;
-        return "remaining: {$remaining} item(s)";
+        return "স্টকে আছে: {$remaining} {$this->item_unit->name}";
     }
 }
