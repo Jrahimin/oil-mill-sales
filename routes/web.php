@@ -28,6 +28,8 @@ Route::middleware(['auth'])->group(function (){
 
     Route::resource('sales', 'SaleController');
 
+    Route::resource('customers','CustomerController');
+
     Route::get('category/{categoryId}/items', 'SaleController@getItemsForCategory');
     Route::get('item/{itemId}/stocks', 'SaleController@getStocks');
     Route::get('stock/{stockId}/sale-price', 'SaleController@getSalePrice');

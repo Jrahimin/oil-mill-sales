@@ -137,6 +137,7 @@
                 <li><a href="{{route('items.index')}}"><i class="fa fa-product-hunt" aria-hidden="true"></i><span>Item</span></a></li>
                 <li><a href="{{ route('stocks.index') }}"><i class="fa fa-address-book" aria-hidden="true"></i><span>Stock</span></a></li>
                 <li><a href="#"><i class="fa fa-car" aria-hidden="true"></i><span>Vehicle</span></a></li>
+                <li><a href="{{ route('customers.index') }}"><i class="fa fa-cart-plus" aria-hidden="true"></i><span>Customer</span></a></li>
                 <li><a href="{{ route('sales.index') }}"><i class="fa fa-money" aria-hidden="true"></i><span>Sale</span></a></li>
             </ul>
         </section>
