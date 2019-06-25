@@ -2,18 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\vehicle\VehicleStoreRequest;
+use App\Http\Requests\vehicle\VehicleUpdateRequest;
+use App\Model\Vehicle;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class VehicleController extends Controller
 {
+    use ApiResponseTrait ;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+        try{
+
+            if(!$request->wantsJson())
+                return view('vehicle.index');
+            $vehicles = Vehicle::paginate(2);
+
+            return $this->successResponse($vehicles);
+
+        }catch (\Exception $e)
+        {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something went wrong');
+        }
     }
 
     /**
@@ -32,9 +51,17 @@ class VehicleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(VehicleStoreRequest $request)
     {
-        //
+        try{
+            Vehicle::create($request->all()) ;
+            return $this->successResponseWithMsg('Successfully added vehicle');
+
+        }catch (\Exception $e)
+        {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something went wrong');
+        }
     }
 
     /**
@@ -66,9 +93,15 @@ class VehicleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(VehicleUpdateRequest $request, $id)
     {
-        //
+        try{
+            Vehicle::findOrFail($id)->update($request->all());
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**
@@ -79,6 +112,14 @@ class VehicleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+            Vehicle::destroy($id);
+            return $this->successResponseWithMsg('Vehicle Deleted Successfully');
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 }

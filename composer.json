@@ -36,8 +36,10 @@
             "App\\": "app/"
         },
         "classmap": [
+
             "database/seeds",
-            "database/factories"
+            "database/factories",
+            "database/migrations"
         ],
         "files": [
             "app/Helpers/DropDownHelper.php"

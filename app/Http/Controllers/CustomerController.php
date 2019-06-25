@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\customer\CustomerStoreRequest;
+use App\Http\Requests\customer\CustomerUpdateRequest;
 use App\Model\Customer;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
@@ -91,7 +92,7 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CustomerUpdateRequest $request, $id)
     {
         try{
             Customer::findOrFail($id)->update($request->all());
