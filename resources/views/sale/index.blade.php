@@ -11,8 +11,30 @@
                 <div class="panel-body">
                     <form>
                         <div class="form-group col-md-8">
+                            <label class="radio-inline"><input type="radio" value="0" v-model.number="sale_pack.sale_type" checked>সাধারণ বিক্রয়</label>
+                            <label class="radio-inline"><input type="radio" value="1" v-model.number="sale_pack.sale_type">ডেলিভারি</label>
+                        </div>
+
+                        <div v-if="sale_pack.sale_type==1">
+                            <div class="form-group col-md-8">
+                                <label for="address">গাড়ি</label>
+                                <select class="form-control" v-model.number="sale_pack.vehicle_id">
+                                    <option value="">-- সিলেক্ট গাড়ি --</option>
+                                    <option v-for="(vehicle, id) in vehicles" :value="id">@{{ vehicle }}</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="address">রুট</label>
+                                <select class="form-control" v-model.number="sale_pack.route_id">
+                                    <option value="">-- সিলেক্ট রুট --</option>
+                                    <option v-for="(route, id) in routes" :value="id">@{{ route }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-8">
                             <label for="address">Customers</label>
-                            <select class="form-control" v-model="customer_id">
+                            <select class="form-control" v-model.number="sale_pack.customer_id">
                                 <option value="">-- Select Customer --</option>
                                 <option v-for="(customer, id) in customers" :value="id">@{{ customer }}</option>
                             </select>
@@ -20,7 +42,7 @@
 
                         <div class="form-group col-md-8">
                             <label for="address">Item Category</label>
-                            <select class="form-control" v-model="sale.category_id" @change="getItems(sale.category_id)">
+                            <select class="form-control" v-model.number="sale.category_id" @change="getItems(sale.category_id)">
                                 <option value="">-- Select Item Category --</option>
                                 <option v-for="(category, id) in categories" :value="id">@{{ category }}</option>
                             </select>
@@ -28,7 +50,7 @@
 
                         <div class="form-group col-md-8">
                             <label for="address">Items</label>
-                            <select class="form-control" v-model="sale.item_id" @change="getStocks(sale.item_id)">
+                            <select class="form-control" v-model.number="sale.item_id" @change="getStocks(sale.item_id)">
                                 <option value="">-- Select Item --</option>
                                 <option v-for="item in items" :value="item.id">@{{ item.title }}</option>
                             </select>
@@ -36,7 +58,7 @@
 
                         <div class="form-group col-md-8">
                             <label for="address">Stock</label>
-                            <select class="form-control" v-model="sale.stock_id" @change="getSalePrice(sale.stock_id)">
+                            <select class="form-control" v-model.number="sale.stock_id" @change="getSalePrice(sale.stock_id)">
                                 <option value="">-- Select Stock --</option>
                                 <option v-for="stock in stocks" :value="stock.id">@{{ stock.remaining }}</option>
                             </select>
@@ -50,8 +72,8 @@
                             <input type="text" class="form-control" v-model="sale.quantity">
                         </div>
                         <div class="form-group col-md-8">
-                            <label for="quantity">Unit</label>
-                            <select class="form-control" v-model="sale.item_unit_id">
+                            <label for="item_unit_id">Unit</label>
+                            <select class="form-control" v-model.number="sale.item_unit_id">
                                 <option value="">-- Select Unit --</option>
                                 <option v-for="(unit, id) in units" :value="id">@{{ unit }}</option>
                             </select>
@@ -127,8 +149,16 @@
                 categories: {!! json_encode(__itemCategoryDropdown()) !!},
                 customers: {!! json_encode(__customerDropdown()) !!},
                 units: {!! json_encode(__itemUnitDropdown()) !!},
+                vehicles: {!! json_encode(__vehiclesDropdown()) !!},
+                routes: {!! json_encode(__routesDropdown()) !!},
 
-                customer_id:'',
+                sale_pack:{
+                    sale_type:0,
+                    customer_id:'',
+                    vehicle_id:'',
+                    route_id:''
+                },
+
                 items:[],
                 stocks:[],
                 sale:{
@@ -153,6 +183,16 @@
             },
 
             methods:{
+                resetComponent(){
+                    this.sale_pack = {sale_type:0, customer_id:'', vehicle_id:'', route_id:''};
+                    this.items = [];
+                    this.stocks = [];
+                    this.sale = {unit_price:'',category_id:'',item_id:'',item_unit_id:'',stock_id:'',quantity:'',no_of_jar:0,no_of_drum:0,item:'',category_name:''};
+                    this.stock_remaining = '';
+                    this.saleList = [];
+                    this.errors = [];
+                },
+
                 getItems(categoryId) {
                     axios.get('category/'+categoryId+'/items').then(response=> {
                         this.items = response.data;
@@ -198,9 +238,9 @@
                 },
 
                 sellItem(){
-                    axios.post('{{ route('sales.store') }}', {"customer_id":this.customer_id, "sale_list":this.saleList}).then(response=>{
-                        console.log(response.data);
-                        this.errors = [];
+                    axios.post('{{ route('sales.store') }}', {"sale_pack":this.sale_pack, "sale_list":this.saleList}).then(response=>{
+                        this.resetComponent();
+
                         this.$toasted.success("Successful Sale",{
                             position: 'top-center',
                             theme: 'bubble',

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Item;
+use App\Model\ItemUnit;
 use App\Model\Sale;
 use App\Model\SalePackage;
 use App\Model\Stock;
@@ -87,7 +88,10 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
+        Log::debug(json_encode($request->all()));
+
         $this->validateStoreRequest($request);
+
         try {
             $lastSalePack = SalePackage::latest('id')->first();
             $salePackCount = $lastSalePack ? $lastSalePack->id : 1;
@@ -95,7 +99,9 @@ class SaleController extends Controller
             $salePackData = array(
                 "serial_no" => $serialNo,
                 "user_id" => auth()->user()->id,
-                "customer_id" => $request->customer_id,
+                "customer_id" => $request->sale_pack['customer_id'],
+                "vehicle_id" => $request->sale_pack['vehicle_id'] ?? null,
+                "route_id" => $request->sale_pack['route_id'] ?? null,
                 "status" => 1
             );
 
@@ -121,8 +127,22 @@ class SaleController extends Controller
 
                 // if stock unit and sale unit differs, we need to make conversion and adjust stock accordingly
                 $stock = Stock::findOrFail($sale['stock_id']);
-                $conversionRate = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->firstOrFail()->conversion_rate;
-                $quantity = $stock->item_unit_id == $sale['item_unit_id'] ? $sale['quantity'] : $sale['quantity']/$conversionRate;
+
+                $conversionRate = false;
+                if($stock->item_unit_id != $sale['item_unit_id'])
+                    $conversionRate = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->firstOrFail()->conversion_rate;
+
+                $quantity = $conversionRate ? $sale['quantity']/$conversionRate : $sale['quantity'];
+
+                if($stock->quantity - $stock->sold < $quantity){
+                    $item = Item::findOrFail($sale['item_id']);
+                    $saleUnit = ItemUnit::find($sale['item_unit_id']);
+
+                    DB::rollBack();
+                    return response()->json([
+                        'messages' => ["{$quantity} {$saleUnit->name} {$item->title} is not in stock"],
+                    ], 422);
+                }
 
                 $stock->increment('sold', $quantity);
             }
@@ -187,11 +207,30 @@ class SaleController extends Controller
 
     protected function validateStoreRequest(Request $request)
     {
-        // validating request list => customer_id and sale_list check if exists
+        // validating sale_pack and sale_list if exist
         $validator = Validator::make($request->all(),[
-            'customer_id' => 'required|integer',
+            'sale_pack' => 'required',
             'sale_list' => 'required'
         ]);
+
+        if($validator->fails()){
+            throw new HttpResponseException(response()->json([
+                'messages' => $validator->errors()->all(),
+            ], 422));
+        }
+
+        // validating sale pack attributes
+        if((int) $request->sale_pack['sale_type'] == 1){
+            $validator = Validator::make($request->sale_pack,[
+                'customer_id' => 'required|integer',
+                'vehicle_id' => 'required|integer',
+                'route_id' => 'required|integer'
+            ]);
+        }else{
+            $validator = Validator::make($request->sale_pack,[
+                'customer_id' => 'required|integer',
+            ]);
+        }
 
         if($validator->fails()){
             throw new HttpResponseException(response()->json([
@@ -202,6 +241,7 @@ class SaleController extends Controller
         //sale_list extracted and validated here
         foreach ($request->sale_list as $aData)
         {
+            // validating sale_list attributes
             $validator = Validator::make($aData,[
                 'unit_price' => 'required|numeric',
                 'item_id' => 'required|integer',

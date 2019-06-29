@@ -92,7 +92,7 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CustomerUpdateRequest $request, $id)
+    public function update(CustomerStoreRequest $request, $id)
     {
         try{
             Customer::findOrFail($id)->update($request->all());

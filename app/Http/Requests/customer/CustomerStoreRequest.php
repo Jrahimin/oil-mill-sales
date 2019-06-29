@@ -27,7 +27,7 @@ class CustomerStoreRequest extends FormRequest
     {
         return [
             'name' =>'required',
-            'mobile_no'=>'required',
+            'mobile_no'=>'required|regex:/[0][1][1-9]{9}$/',
             'address' => 'required'
         ];
     }

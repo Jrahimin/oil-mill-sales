@@ -31,3 +31,19 @@ if (!function_exists('__itemUnitDropdown')) {
         return ($itemUnits ? $itemUnits->toArray() : []);
     }
 }
+
+if (!function_exists('__vehiclesDropdown')) {
+    function __vehiclesDropdown()
+    {
+        $vehicles = \App\Model\Vehicle::pluck('title', 'id');
+        return ($vehicles ? $vehicles->toArray() : []);
+    }
+}
+
+if (!function_exists('__routesDropdown')) {
+    function __routesDropdown()
+    {
+        $routes = \App\Model\Route::selectRaw("CONCAT(journey_from,' : ',journey_to) as route, id")->pluck('route', 'id');
+        return ($routes ? $routes->toArray() : []);
+    }
+}

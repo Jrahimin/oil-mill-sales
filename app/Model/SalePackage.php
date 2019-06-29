@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SalePackage extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
-    protected $fillable = ['serial_no', 'user_id', 'customer_id', 'vehicle_id', 'journey_from', 'journey_to', 'status'];
+    protected $fillable = ['serial_no', 'user_id', 'customer_id', 'vehicle_id', 'route_id', 'journey_from', 'journey_to', 'status'];
 
     public function sales(){
         return $this->hasMany(Sale::class);
