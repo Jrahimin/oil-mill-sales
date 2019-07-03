@@ -151,7 +151,7 @@ class SaleController extends Controller
 
             DB::commit();
 
-            return $this->successResponseWithMsg("Successfully sold");
+            return $this->successResponse($salePack->id);
         }
         catch (\Exception $e){
             DB::rollBack();

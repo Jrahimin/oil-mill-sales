@@ -241,7 +241,7 @@
                     axios.post('{{ route('sales.store') }}', {"sale_pack":this.sale_pack, "sale_list":this.saleList}).then(response=>{
                         this.resetComponent();
 
-                        this.$toasted.success("Successful Sale",{
+                        /*this.$toasted.success("Successful Sale",{
                             position: 'top-center',
                             theme: 'bubble',
                             duration: 6000,
@@ -251,7 +251,9 @@
                                     toastObject.goAway(0);
                                 }
                             },
-                        });
+                        });*/
+
+                        window.location = `{!! route('memo') !!}`+'?packId='+response.data;
                     }).catch(error=>{
                         if(error.response.status !== 422){
                             let errorMsg = error.response.data.message;

@@ -16,4 +16,8 @@ class Sale extends Model
     public function item_unit(){
         return $this->belongsTo(ItemUnit::class);
     }
+
+    public function item(){
+        return $this->belongsTo(Item::class);
+    }
 }

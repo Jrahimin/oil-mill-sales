@@ -12,7 +12,7 @@
 */
 
 Route::get('test',function (){
-   dd(now()->format('Y-m-d'));
+   dd(route('memo'));
 });
 
 Route::middleware(['auth'])->group(function (){
@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function (){
     Route::resource('routes', 'RouteController');
 
     Route::resource('item-units', 'ItemUnitController');
+
+    Route::get('memo', 'MemoController@index')->name('memo');
 });
 
 Auth::routes();
