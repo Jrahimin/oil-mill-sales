@@ -1,10 +1,16 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>তানভির ওয়েল মিল</title>
 
     <style>
+        @font-face {
+            font-family: 'Firefly';
+            font-style: normal;
+            font-weight: normal;
+            src: {{ url('fonts/kalpurush.ttf') }} format('truetype');
+        }
         .invoice-box {
             max-width: 800px;
             margin: auto;
@@ -99,11 +105,11 @@
     </style>
 </head>
 
-<body>
+<body style="font-family: kalpurush, DejaVu Sans, sans-serif;">
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
         <tr class="top">
-            <td colspan="2">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td class="title">
@@ -111,9 +117,8 @@
                         </td>
 
                         <td>
-                            Invoice #: {{ $salePack->id }}<br>
-                            Created: {{ $salePack->created_at }}<br>
-                            Due: January 1, 1971
+                            ক্রমিক নং # {{ $salePack->id }}<br>
+                            তারিখঃ {{ date('d-m-Y', strtotime($salePack->created_at)) }}
                         </td>
                     </tr>
                 </table>
@@ -121,40 +126,72 @@
         </tr>
 
         <tr class="information">
-            <td colspan="2">
+            <td colspan="4">
                 <table>
                     <tr>
                         <td>
-                            তানভির ওয়েল মিল<br>
-                            12345 Sunny Road<br>
-                            Sunnyville, CA 12345
+                            <strong>মেসার্স তানভির অয়েল মিলস</strong><br>
+                            প্রোঃ মোঃ সোহরাওয়ার্দী আলম<br/>
+                            মোবাঃ ০১৭১৩-৭১২৪৭৫, ০১৭০৩-৪৬৭০৭৫<br/>
+                            পীরগঞ্জ, ঠাকুরগাঁও<br/>
                         </td>
+                    </tr>
 
+                    <tr>
                         <td>
-                            Acme Corp.<br>
-                            {{ $salePack->customer->name }}<br>
-                            john@example.com
+                            ক্রেতার নামঃ {{ $salePack->customer->name }}<br>
+                            ঠিকানাঃ {{ $salePack->customer->address }}
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
+    </table>
 
+    <table cellpadding="0" cellspacing="0">
         <tr class="heading">
-            <td>Sale</td>
-            <td>Quantity</td>
-            <td>Price</td>
-            <td>Total Price</td>
+            <td>ক্রম</td>
+            <td>বিবরণ</td>
+            <td>পরিমাণ</td>
+            <td>ইউনিট প্রতি</td>
+            <td>টাকা</td>
         </tr>
 
+        @php
+            $count = 1;
+            $total = 0;
+        @endphp
         @foreach($salePack->sales as $sale)
+            @php
+                $total += $sale->total_price;
+            @endphp
             <tr class="details">
+                <td>{{ $count++ }}</td>
                 <td>{{ $sale->item->title }}</td>
                 <td>{{ $sale->quantity }}  {{ $sale->item_unit->name }}</td>
-                <td>{{ $sale->unit_price }}</td>
-                <td>{{ $sale->total_price }}</td>
+                <td>{{ $sale->unit_price }} টাকা</td>
+                <td>{{ $sale->total_price }} টাকা</td>
             </tr>
         @endforeach
+
+        <tr class="heading">
+            <td colspan="3"></td>
+            <td>মোটঃ {{ $total }} টাকা</td>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+
+        <tr>
+            <td>
+                গ্রহীতার স্বাক্ষরঃ
+            </td>
+        </tr>
 
     </table>
 </div>

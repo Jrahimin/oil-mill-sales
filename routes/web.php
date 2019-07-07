@@ -12,7 +12,7 @@
 */
 
 Route::get('test',function (){
-   dd(route('memo'));
+   dd(public_path('fonts/kalpurush.ttf'));
 });
 
 Route::middleware(['auth'])->group(function (){

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\SalePackage;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -12,8 +13,11 @@ class MemoController extends Controller
     {
         try{
             $salePack = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->where('id', $request->packId)->firstOrFail();
+            /*$saleDate = date('d-m-Y', strtotime($salePack->created_at));
 
-            //dd($salePack->sales[0]);
+            $pdf = PDF::loadView('sale.memo', compact('salePack'));
+            return $pdf->download("sale-{$saleDate}.pdf");*/
+
             return view('sale.memo', compact('salePack'));
         }
         catch (\Exception $e){
