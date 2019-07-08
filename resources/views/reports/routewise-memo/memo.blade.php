@@ -108,42 +108,12 @@
 <body style="font-family: kalpurush, DejaVu Sans, sans-serif;">
 <div class="invoice-box">
     <table cellpadding="0" cellspacing="0">
-        <tr class="top">
-            <td colspan="4">
-                <table>
-                    <tr>
-                        <td class="title">
-                            <img src="https://www.sparksuite.com/images/logo.png" style="width:100%; max-width:300px;">
-                        </td>
-
-                        <td>
-                            ক্রমিক নং # {{ $salePack->id }}<br>
-                            তারিখঃ {{ date('d-m-Y', strtotime($salePack->created_at)) }}
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-
-        <tr class="information">
-            <td colspan="4">
-                <table>
-                    <tr>
-                        <td>
-                            <strong>মেসার্স তানভির অয়েল মিলস</strong><br>
-                            প্রোঃ মোঃ সোহরাওয়ার্দী আলম<br/>
-                            মোবাঃ ০১৭১৩-৭১২৪৭৫, ০১৭০৩-৪৬৭০৭৫<br/>
-                            পীরগঞ্জ, ঠাকুরগাঁও<br/>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            ক্রেতার নামঃ {{ $salePack->customer->name }}<br>
-                            ঠিকানাঃ {{ $salePack->customer->address }}
-                        </td>
-                    </tr>
-                </table>
+        <tr>
+            <td>
+                <strong>মেসার্স তানভির অয়েল মিলস</strong><br>
+                প্রোঃ মোঃ সোহরাওয়ার্দী আলম<br/>
+                মোবাঃ ০১৭১৩-৭১২৪৭৫, ০১৭০৩-৪৬৭০৭৫<br/>
+                পীরগঞ্জ, ঠাকুরগাঁও<br/>
             </td>
         </tr>
     </table>
@@ -151,47 +121,36 @@
     <table cellpadding="0" cellspacing="0">
         <tr class="heading">
             <td>ক্রম</td>
-            <td>বিবরণ</td>
-            <td>পরিমাণ</td>
-            <td>ইউনিট প্রতি</td>
-            <td>টাকা</td>
+            <td>নাম/ঠিকানা</td>
+            <td>জার</td>
+            <td>ড্রাম</td>
+            <td>মোট দাম</td>
+            <td>মোট আদায়</td>
+            <td>জার</td>
+            <td>ড্রাম</td>
         </tr>
 
         @php
             $count = 1;
-            $total = 0;
         @endphp
-        @foreach($salePack->sales as $sale)
-            @php
-                $total += $sale->total_price;
-            @endphp
+        @foreach($salePacks as $salePack)
             <tr class="details">
                 <td>{{ $count++ }}</td>
-                <td>{{ $sale->item->title }}</td>
-                <td>{{ $sale->quantity }}  {{ $sale->item_unit->name }}</td>
-                <td>{{ $sale->unit_price }} টাকা</td>
-                <td>{{ $sale->total_price }} টাকা</td>
+                <td>{{ $salePack->customer->name }}</td>
+                <td>{{ $salePack->sales->sum('no_of_jar') }}</td>
+                <td>{{ $salePack->sales->sum('no_of_drum') }}</td>
+                <td>{{ $salePack->sales->sum('total_price') }}</td>
+                <td> টাকা</td>
+                <td>Jar</td>
+                <td>Drum</td>
             </tr>
         @endforeach
 
-        <tr class="heading">
+        {{--<tr class="heading">
             <td colspan="3"></td>
             <td>মোটঃ {{ $total }} টাকা</td>
             <td></td>
-        </tr>
-
-        <tr>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-        </tr>
-
-        <tr>
-            <td>
-                গ্রহীতার স্বাক্ষরঃ
-            </td>
-        </tr>
+        </tr>--}}
 
     </table>
 </div>

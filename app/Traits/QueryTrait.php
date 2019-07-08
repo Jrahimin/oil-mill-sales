@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Log;
+
 trait QueryTrait
 {
     protected static function filterQuery($request, $query, $whereFilterList=[], $likeFilterList=[])

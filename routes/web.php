@@ -40,7 +40,10 @@ Route::middleware(['auth'])->group(function (){
 
     Route::resource('item-units', 'ItemUnitController');
 
-    Route::get('memo', 'MemoController@index')->name('memo');
+    Route::get('memo', 'ReportController@generateMemo')->name('memo');
+
+    Route::get('report/route', 'ReportController@routeWiseReport')->name('route_report');
+    Route::get('memo/route', 'ReportController@generateRouteWiseReport')->name('route_memo');
 });
 
 Auth::routes();
