@@ -80,13 +80,24 @@
                         </div>
 
                         <div class="form-group col-md-8">
-                            <label for="quantity">No of Jar</label>
+                            <label for="no_of_jar">No of Jar</label>
                             <input type="text" class="form-control" v-model="sale.no_of_jar">
                         </div>
 
                         <div class="form-group col-md-8">
-                            <label for="quantity">No of Drum</label>
+                            <label for="no_of_drum">No of Drum</label>
                             <input type="text" class="form-control" v-model="sale.no_of_drum">
+                        </div>
+
+                        <div v-if="sale_pack.sale_type==1">
+                            <div class="form-group col-md-8">
+                                <label for="no_of_jar_return">No of Jar Returned</label>
+                                <input type="text" class="form-control" v-model="sale.no_of_jar_return">
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="no_of_drum_return">No of Drum Returned</label>
+                                <input type="text" class="form-control" v-model="sale.no_of_drum_return">
+                            </div>
                         </div>
 
                         <div class="form-group col-md-8">
@@ -129,6 +140,14 @@
                     </table>
                 </div>
             </div>
+
+            <div class="form-group col-md-3 pull-right">
+                <label>Total: @{{ total }}</label><br/>
+                <label for="no_of_drum_return">Paid</label>
+                <input type="text" class="form-control" v-model="sale_pack.paid">
+            </div>
+            <div class="clearfix"></div>
+
             <div class="pull-right" v-if="saleList.length">
                 <button class="btn btn-primary" @click.prevent="sellItem">Submit</button>
             </div>
@@ -156,7 +175,8 @@
                     sale_type:0,
                     customer_id:'',
                     vehicle_id:'',
-                    route_id:''
+                    route_id:'',
+                    paid:''
                 },
 
                 items:[],
@@ -170,9 +190,12 @@
                     quantity:'',
                     no_of_jar:0,
                     no_of_drum:0,
+                    no_of_jar_return:0,
+                    no_of_drum_return:0,
                     item:'',
                     category_name:'',
                 },
+                total:0,
                 stock_remaining:'',
                 saleList:[],
                 errors:[],
@@ -187,7 +210,8 @@
                     this.sale_pack = {sale_type:0, customer_id:'', vehicle_id:'', route_id:''};
                     this.items = [];
                     this.stocks = [];
-                    this.sale = {unit_price:'',category_id:'',item_id:'',item_unit_id:'',stock_id:'',quantity:'',no_of_jar:0,no_of_drum:0,item:'',category_name:''};
+                    this.sale = {unit_price:'',category_id:'',item_id:'',item_unit_id:'',stock_id:'',quantity:'',no_of_jar:0,no_of_drum:0,
+                        no_of_jar_return:0,no_of_drum_return:0,item:'',category_name:''};
                     this.stock_remaining = '';
                     this.saleList = [];
                     this.errors = [];
@@ -205,6 +229,8 @@
                             quantity:'',
                             no_of_jar:0,
                             no_of_drum:0,
+                            no_of_jar_return:0,
+                            no_of_drum_return:0,
                         };
                     })
                 },
@@ -226,10 +252,8 @@
                     })
                 },
                 AddToBucket(){
-                    /*if(parseInt(this.stock_remaining) < parseInt(this.sale.quantity)){
-                        alert("Not enough in stock");
-                        return;
-                    }*/
+                    this.total +=this.sale.quantity*this.sale.unit_price;
+
                     if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.quantity){
                         alert("please provide all the sales info");
                         return;

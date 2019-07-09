@@ -22,6 +22,8 @@ class CreateSalesTable extends Migration
             $table->unsignedInteger('item_unit_id');
             $table->unsignedInteger('no_of_jar')->default(0);
             $table->unsignedInteger('no_of_drum')->default(0);
+            $table->unsignedInteger('no_of_jar_return')->default(0);
+            $table->unsignedInteger('no_of_drum_return')->default(0);
             $table->double('unit_price');
             $table->double('total_price');
             $table->timestamps();

@@ -140,9 +140,9 @@
                 <td>{{ $salePack->sales->sum('no_of_jar') }}</td>
                 <td>{{ $salePack->sales->sum('no_of_drum') }}</td>
                 <td>{{ $salePack->sales->sum('total_price') }}</td>
-                <td> টাকা</td>
-                <td>Jar</td>
-                <td>Drum</td>
+                <td>{{ $salePack->paid }}</td>
+                <td>{{ $salePack->sales->sum('no_of_jar_return') }}</td>
+                <td>{{ $salePack->sales->sum('no_of_drum_return') }}</td>
             </tr>
         @endforeach
 

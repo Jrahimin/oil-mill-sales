@@ -15,7 +15,7 @@ class CreateSaleReportsTable extends Migration
     {
         Schema::create('sale_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('sale_package_id');
+            $table->unsignedBigInteger('sale_package_id');
             $table->foreign('sale_package_id')->references('id')->on('sale_packages')->onDelete('cascade');
             $table->unsignedInteger('customer_id');
             $table->string('customer_name');

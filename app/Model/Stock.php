@@ -9,7 +9,7 @@ class Stock extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
     protected $fillable = ['item_id', 'user_id', 'quantity', 'item_unit_id', 'no_of_jar', 'no_of_drum',
-                           'price', 'sale_price', 'status', 'stock_date', 'sold'];
+                           'price', 'sale_price', 'status', 'stock_place', 'stock_date', 'sold'];
 
     protected $appends = ['stock_status', 'remaining'];
 

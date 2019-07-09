@@ -1,12 +1,20 @@
-<div id="createStock" class="modal fade" style="margin-top: 5%;">
+<div id="createStock" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Create Stock </h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: 600px; overflow-y: auto;">
                 <form>
+                    <div class="form-group">
+                        <label for="address">Stock At</label>
+                        <select class="form-control" v-model="newStock.stock_place">
+                            <option value="">-- Select Place --</option>
+                            <option value="1">পুরাতন মিল</option>
+                            <option value="2">নতুন মিল</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="address">Item</label>
                         <select class="form-control" v-model="newStock.item_id">

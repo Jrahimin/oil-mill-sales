@@ -5,7 +5,7 @@
         <div class="col-md-10 col-md-offset-1">
             @if(auth()->user()->type=='admin')
                 <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createStock"
-                        @click="newStock={item_id:'', item_unit_id:'', status:1}">
+                        @click="newStock={stock_place:'', item_id:'', item_unit_id:'', status:1}">
                     <i class="fa fa-plus"> Add</i>
                 </button>
             @endif
@@ -35,6 +35,7 @@
                             <th>SalePrice</th>
                             <th>status</th>
                             <th>stockedBy</th>
+                            <th>StockAt</th>
                             <th>StockDate</th>
                             @if(auth()->user()->type=='admin')
                                 <th>Action</th>
@@ -57,6 +58,10 @@
                             <td>@{{ stock.sale_price }} </td>
                             <td>@{{ stock.stock_status }}</td>
                             <td>@{{ stock.user.name }}</td>
+                            <td>
+                                <span v-if="stock.stock_place==1">পুরাতন মিল</span>
+                                <span v-if="stock.stock_place==2">নতুন মিল</span>
+                            </td>
                             <td>@{{ stock.stock_date }}</td>
                             <td>
                                 @if(auth()->user()->type=='admin')
@@ -130,7 +135,7 @@
                 stocks:[],
                 items:[],
                 aStock:{},
-                newStock:{item_id:'', item_unit_id:'', status:1},
+                newStock:{stock_place:'', item_id:'', item_unit_id:'', status:1},
                 stock_id:'',
                 pagination:{},
                 errors:[],

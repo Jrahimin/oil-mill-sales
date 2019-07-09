@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\Customer;
 use App\Model\Item;
 use App\Model\ItemUnit;
 use App\Model\Sale;
@@ -102,7 +103,8 @@ class SaleController extends Controller
                 "customer_id" => $request->sale_pack['customer_id'],
                 "vehicle_id" => $request->sale_pack['vehicle_id'] ?? null,
                 "route_id" => $request->sale_pack['route_id'] ?? null,
-                "status" => 1
+                "status" => 1,
+                "paid" => $request->sale_pack['paid']
             );
 
             DB::beginTransaction();
@@ -110,7 +112,10 @@ class SaleController extends Controller
             $salePack = SalePackage::create($salePackData);
 
             $saleData = [];
+            $salePackPrice = 0;
             foreach ($request->sale_list as $sale) {
+                $saleTotal = $sale['unit_price'] * $sale['quantity']; // per sale total
+                $salePackPrice += $saleTotal; // calculating full sale pack total price
                 $data = array(
                     "sale_package_id" => $salePack->id,
                     "item_id" => $sale['item_id'],
@@ -119,8 +124,10 @@ class SaleController extends Controller
                     "item_unit_id" => $sale['item_unit_id'],
                     "no_of_jar" => $sale['no_of_jar'],
                     "no_of_drum" => $sale['no_of_drum'],
+                    "no_of_jar_return" => $sale['no_of_jar_return'],
+                    "no_of_drum_return" => $sale['no_of_drum_return'],
                     "unit_price" => $sale['unit_price'],
-                    "total_price" => $sale['unit_price'] * $sale['quantity'],
+                    "total_price" => $saleTotal,
                 );
 
                 $saleData[] = $data;
@@ -145,6 +152,17 @@ class SaleController extends Controller
                 }
 
                 $stock->increment('sold', $quantity);
+            }
+
+            $unpaid = $salePackPrice - $request->sale_pack['paid'];
+            if($unpaid){
+                $salePack->update([
+                    "total_price" => $salePackPrice,
+                    "unpaid" => $unpaid
+                ]);
+
+                $customer = Customer::findOrFail($request->sale_pack['customer_id']);
+                $customer->increment('unpaid', $unpaid);
             }
 
             Sale::insert($saleData);
@@ -224,11 +242,13 @@ class SaleController extends Controller
             $validator = Validator::make($request->sale_pack,[
                 'customer_id' => 'required|integer',
                 'vehicle_id' => 'required|integer',
-                'route_id' => 'required|integer'
+                'route_id' => 'required|integer',
+                'paid' => 'required|numeric'
             ]);
         }else{
             $validator = Validator::make($request->sale_pack,[
                 'customer_id' => 'required|integer',
+                'paid' => 'required|numeric'
             ]);
         }
 

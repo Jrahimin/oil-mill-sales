@@ -17,6 +17,7 @@ class CreateStocksTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('item_id')->index();
             $table->foreign('item_id')->references('id')->on('items')->onDelete('restrict');
+            $table->tinyInteger('stock_place');
             $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('item_unit_id');
             $table->double('quantity');

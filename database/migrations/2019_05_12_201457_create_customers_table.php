@@ -18,6 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('name');
             $table->string('mobile_no');
             $table->string('address')->nullable();
+            $table->double('unpaid')->default(0);
             $table->timestamps();
         });
     }
