@@ -12,6 +12,7 @@
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ionicons.min.css') }}">
 
     <!-- Jquery Ui -->
     <link href="{{ asset('css/jquery-ui.css') }}" rel="stylesheet" />
