@@ -131,5 +131,20 @@ class ItemController extends Controller
         }
     }
 
+    public function getItemsForCategory($categoryId)
+    {
+        try{
+            Log::debug("category: ".$categoryId);
+            if($categoryId)
+                $items = Item::where('category_id', $categoryId)->pluck('title', 'id');
+            else
+                $items = Item::pluck('title', 'id');
 
+            return $this->successResponse($items);
+        }
+        catch(\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
+    }
 }

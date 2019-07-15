@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function (){
     Route::resource('stocks', 'StockController');
 
     Route::resource('items','ItemController');
+    Route::get('items/category/{categoryId}','ItemController@getItemsForCategory');
 
     Route::resource('sales', 'SaleController');
 

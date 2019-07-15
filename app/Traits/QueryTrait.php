@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 trait QueryTrait
@@ -34,5 +35,12 @@ trait QueryTrait
             $query->whereDate($column, '<=', $to);
         }
         return $query;
+    }
+
+    protected static function filterWhereHasRelation($query, Request $request, $relation, $column)
+    {
+        return $query->whereHas($relation, function ($q) use ($request, $column) {
+           $q->where($column, $request->{$column});
+        });
     }
 }

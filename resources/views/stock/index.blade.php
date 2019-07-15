@@ -2,6 +2,9 @@
 
 @section('content')
     <div id="stockList">
+
+        @include('stock.search')
+
         @if(auth()->user()->type=='admin')
             <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createStock"
                     @click="newStock={stock_place:'', item_id:'', item_unit_id:'', status:1}">
@@ -137,6 +140,17 @@
                 stock_id:'',
                 pagination:{},
                 errors:[],
+
+                searchCategories: {!! json_encode(__itemCategoryDropdown()) !!},
+                searchItems: {!! json_encode(__itemDropdown()) !!},
+                search:{
+                    item_id:'',
+                    category_id:'',
+                    status:'',
+                    stock_place:'',
+                    from_date:'',
+                    to_date:''
+                }
             },
 
             created(){
@@ -144,17 +158,32 @@
             },
 
             methods:{
+                reset(){
+                    this.search = {item_id:'', category_id:'', status:'', stock_place:'', from_date:'', to_date:''};
+                    this.getStockList();
+                },
+
+                getItemsForCategory(){
+                    this.search.item_id='';
+
+                    if(this.search.category_id){
+                        axios.get('items/category/'+this.search.category_id).then(response=> {
+                            this.searchItems = response.data;
+                        })
+                    }
+                    else
+                        this.searchItems = {!! json_encode(__itemDropdown()) !!};
+                },
+
                 getStockList(pageUrl) {
                     let that = this;
-                    pageUrl = pageUrl == undefined ? `{{route('stocks.index')}}` : pageUrl;
+                    pageUrl = !pageUrl ? `{{route('stocks.index')}}` : pageUrl; // in js ! => undefined, false, 0, ''
 
-                    axios.get(pageUrl).then(response=> {
+                    axios.get(pageUrl, {params:that.search}).then(response=> {
                         that.stocks = response.data.stocks.data;
                         that.items = response.data.items;
                         that.pagination = response.data.stocks;
                         that.total = that.pagination.total;
-
-                        console.log(that.items)
                     })
                 },
 

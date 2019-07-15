@@ -6,12 +6,13 @@ use App\Http\Requests\Stock\StockStoreRequest;
 use App\Http\Requests\Stock\StockUpdateRequest;
 use App\Model\Stock;
 use App\Traits\ApiResponseTrait;
+use App\Traits\QueryTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class StockController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, QueryTrait;
     /**
      * Display a listing of the resource.
      *
@@ -20,12 +21,15 @@ class StockController extends Controller
     public function index(Request $request)
     {
         try{
-            //dd(Stock::with('item.category', 'user')->limit(2)->get());
             if(!$request->wantsJson())
                 return view('stock.index');
 
-            $data['stocks'] = Stock::with('item.category', 'user', 'item_unit')->paginate(2);
-            $data['items'] = __itemDropdown();
+            //$data['stocks'] = Stock::with('item.category', 'user', 'item_unit')->paginate(2);
+
+            $whereFilterList = ['item_id', 'stock_place', 'status'];
+            $query = Stock::with('item.category', 'user', 'item_unit');
+            $data['stocks'] = $this->filter($request, $query, $whereFilterList)->paginate(2);
+
 
             return $this->successResponse($data);
         }
@@ -130,5 +134,17 @@ class StockController extends Controller
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
             return $this->exceptionResponse('Something Went Wrong');
         }
+    }
+
+    protected function filter(Request $request, $query, $whereFilterList=[], $likeFilterList=[])
+    {
+        $query = self::filterQuery($request, $query, $whereFilterList, $likeFilterList);
+
+        $query = self::filterDate($query,'stock_date', $request->from_date, $request->to_date);
+
+        if($request->filled('category_id'))
+            $query = self::filterWhereHasRelation($query, $request,'item','category_id');
+
+        return $query;
     }
 }
