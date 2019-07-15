@@ -31,8 +31,10 @@ class HomeController extends Controller
         $customerCount = Customer::count();
         $dueCustomer = Customer::where('unpaid', '>', 0)->count();
         $saleCount = SalePackage::count();
+        $totalSale = SalePackage::where('status', 1)->sum('total_price');
+        $totalSaleToday = SalePackage::whereDate('created_at', date('y-m-d'))->where('status', 1)->sum('total_price');
         $totalDue = SalePackage::sum('unpaid');
         $itemCount = Item::count();
-        return view('home', compact('userCount', 'customerCount', 'dueCustomer', 'saleCount', 'totalDue', 'itemCount'));
+        return view('home', compact('userCount', 'customerCount', 'dueCustomer', 'saleCount', 'totalSale', 'totalSaleToday', 'totalDue', 'itemCount'));
     }
 }
