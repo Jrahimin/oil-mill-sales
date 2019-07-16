@@ -12,6 +12,13 @@ class ReportController extends Controller
 {
     use QueryTrait;
 
+    public function memoList()
+    {
+        $salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->get();
+
+        return view('reports.memo.index', compact('salePacks'));
+    }
+
     public function generateMemo(Request $request)
     {
         try{
@@ -21,7 +28,7 @@ class ReportController extends Controller
             $pdf = PDF::loadView('sale.memo', compact('salePack'));
             return $pdf->download("sale-{$saleDate}.pdf");*/
 
-            return view('reports.memo', compact('salePack'));
+            return view('reports.memo.memo', compact('salePack'));
         }
         catch (\Exception $e){
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());

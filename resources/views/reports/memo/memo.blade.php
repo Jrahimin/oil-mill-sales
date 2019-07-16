@@ -102,6 +102,19 @@
         .rtl table tr td:nth-child(2) {
             text-align: left;
         }
+
+        .button {
+            background-color: #67b168;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            padding: 8px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -160,9 +173,11 @@
         @endforeach
 
         <tr class="heading">
-            <td colspan="3"></td>
-            <td>মোটঃ {{ $total }} টাকা</td>
             <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><span> মোটঃ {{ $total }} টাকা</span></td>
         </tr>
 
         <tr>
@@ -180,5 +195,17 @@
 
     </table>
 </div>
+
+<div style="width: 1380px; margin-top: 15px;" id="printDiv">
+    <input class="button" type="button" value="print" style="float: right;" onclick="printPage()">
+</div>
+
+<script type="text/javascript">
+    function printPage() {
+        document.getElementById("printDiv").style.display = "none";
+        print();
+    }
+</script>
+
 </body>
 </html>

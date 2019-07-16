@@ -137,7 +137,18 @@ class SaleController extends Controller
 
                 $conversionRate = false;
                 if($stock->item_unit_id != $sale['item_unit_id'])
-                    $conversionRate = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->firstOrFail()->conversion_rate;
+                {
+                    $conversion = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->first();
+                    if(!$conversion){
+                        Log::debug("Stock: ".json_encode($stock));
+                        DB::rollBack();
+                        return response()->json([
+                            'messages' => ["Invalid Unit Conversion"],
+                        ], 422);
+                    }
+
+                    $conversionRate = $conversion->conversion_rate;
+                }
 
                 $quantity = $conversionRate ? $sale['quantity']/$conversionRate : $sale['quantity'];
 
