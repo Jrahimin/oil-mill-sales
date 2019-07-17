@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\SalePackage;
+use App\Traits\ApiResponseTrait;
 use App\Traits\QueryTrait;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
@@ -10,13 +11,24 @@ use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
-    use QueryTrait;
+    use QueryTrait, ApiResponseTrait;
 
-    public function memoList()
+    public function memoList(Request $request)
     {
-        $salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->get();
+        try{
+            /*$salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->get();
+                dd($salePacks[0]->customer->name);*/
+            if(!$request->wantsJson())
+                return view('reports.memo.index', compact('salePacks'));
 
-        return view('reports.memo.index', compact('salePacks'));
+            $salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->paginate(2);
+
+            return $this->successResponse($salePacks);
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     public function generateMemo(Request $request)

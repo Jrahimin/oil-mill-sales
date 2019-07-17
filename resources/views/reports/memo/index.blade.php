@@ -14,52 +14,26 @@
                     <table class="table table-responsive table-hover table-striped">
                         <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Model</th>
-                            <th>Company</th>
-                            <th>Category</th>
-                            <th>Serial No</th>
-                            @if(auth()->user()->type=='admin')
-                                <th>Action</th>
-                            @endif
+                            <th>CustomerName</th>
+                            <th>Route</th>
+                            <th>Total</th>
+                            <th>Unpaid</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        <tr v-for="item in items" >
-                            <td>@{{ item.title }}</td>
-                            <td>@{{ item.model ? item.model : 'N/A'  }}</td>
-                            <td>@{{ item.company ? item.company : 'N/A' }}</td>
-                            <td>@{{ item.category ? item.category.name : 'N/A' }}</td>
-                            <td>@{{ item.serial_no ? item.serial_no : 'N/A'  }}</td>
+                        <tr v-for="salePack in salePackages" >
+                            <td>@{{ salePack.customer.name }}</td>
+                            <td>@{{ salePack.route ? salePack.route.journey_from+' থেকে '+salePack.route.journey_to : 'N/A'  }}</td>
+                            <td>@{{ salePack.total_price }}</td>
+                            <td>@{{ salePack.unpaid }}</td>
+                            <td>@{{ salePack.user.name }}</td>
+                            <td>@{{ salePack.sale_date }}</td>
                             <td>
-                                @if(auth()->user()->type=='admin')
-                                    <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editModal" @click="editClickAction(item.id, item)">Edit</a>
-
-                                    @include('item.edit')
-
-                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal" @click="item_id=item.id">@lang('Delete')</a>
-                                @endif
-
-                                <div id="deleteModal" class="modal fade"  >
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header" style="background-color: indianred">
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                <h4 class="modal-title">Confirmation </h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p> Are you sure?</p>
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-dismiss="modal"  @click="deleteItem(item_id)">@lang('Yes')</button>
-                                                <button type="button" class="btn btn-primary" data-dismiss="modal">@lang('No')</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
+                                <a :href="'{{ route('memo') }}?packId='+ salePack.id" class="btn btn-sm btn-primary">Generate Memo</a>
                             </td>
                         </tr>
                         </tbody>
@@ -100,137 +74,24 @@
 
             data:{
                 total:0,
-                items:[],
-                categories :[],
-                anItem:{},
-                newItem:{item_id:'', status:1},
-                item_id:'',
+                salePackages:[],
                 pagination:{},
                 errors:[],
             },
 
             created(){
-                this.getItemList();
+                this.getSalePacks();
             },
 
             methods:{
-                getItemList(pageUrl) {
+                getSalePacks(pageUrl) {
                     let that = this;
-                    pageUrl = pageUrl == undefined ? `{{route('items.index')}}` : pageUrl;
+                    pageUrl = pageUrl == undefined ? `{{route('memo_list')}}` : pageUrl;
 
                     axios.get(pageUrl).then(response=> {
-                        console.log(response.data)
-                        that.items = response.data.items.data;
-                        that.categories = response.data.itemCategories ;
-                        that.pagination = response.data.items;
+                        that.salePackages = response.data.data;
+                        that.pagination = response.data.data;
                         that.total = that.pagination.total;
-
-                        console.log(that.pagination);
-                    })
-                },
-
-                createItem(){
-                    axios.post('{{ route('items.store') }}', this.newItem).then(response=>{
-                        this.errors = [];
-                        this.getItemList();
-                        this.$toasted.success("Successfully added item",{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
-                    }).catch(error=>{
-                        if(error.response.status !== 422){
-                            let errorMsg = error.response.data.message;
-                            this.$toasted.error(errorMsg,{
-                                position: 'top-center',
-                                theme: 'bubble',
-                                duration: 6000,
-                                action : {
-                                    text : 'Close',
-                                    onClick : (e, toastObject) => {
-                                        toastObject.goAway(0);
-                                    }
-                                },
-                            });
-                        }
-                        else
-                            this.errors = error.response.data.messages;
-                    });
-                },
-
-                editItem(id){
-                    axios.put('{{ route('items.index') }}/'+id, this.anItem).then(response=>{
-                        this.errors = [];
-                        this.getItemList();
-                        this.$toasted.success("Successfully Updated Item",{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
-                    }).catch(error=>{
-                        if(error.response.status !== 422){
-                            let errorMsg = error.response.data.message;
-                            this.$toasted.error(errorMsg,{
-                                position: 'top-center',
-                                theme: 'bubble',
-                                duration: 6000,
-                                action : {
-                                    text : 'Close',
-                                    onClick : (e, toastObject) => {
-                                        toastObject.goAway(0);
-                                    }
-                                },
-                            });
-                        }
-                        else
-                            this.errors = error.response.data.messages;
-                    });
-                },
-                editClickAction(id, itemObj){
-                    this.item_id = id;
-                    this.anItem = JSON.parse(JSON.stringify(itemObj)); // deep cloning of object avoiding shallow copy of object reference
-                },
-
-                deleteItem(id){
-                    axios.post('{{ route('items.index') }}/'+id, {_method:'delete'}).then(response=>{
-                        this.errors = [];
-                        this.getItemList();
-                        this.$toasted.success("Successfully Deleted Item",{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
-                    }).catch(error=>{
-                        let errorMsg = error.response.data.message;
-                        this.$toasted.error(errorMsg,{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });
                     })
                 },
             }

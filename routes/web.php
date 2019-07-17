@@ -15,7 +15,7 @@ Route::get('test',function (){
    dd(public_path('fonts/kalpurush.ttf'));
 });
 
-Route::middleware(['auth'])->group(function (){
+Route::middleware(['auth', 'no_cache'])->group(function (){
     Route::get('/', 'HomeController@index')->name('home');
 
     Route::resource('users', 'UserController');
@@ -46,6 +46,8 @@ Route::middleware(['auth'])->group(function (){
 
     Route::get('report/route', 'ReportController@routeWiseReport')->name('route_report');
     Route::get('memo/route', 'ReportController@generateRouteWiseReport')->name('route_memo');
+
+    Route::get('memo-list', 'ReportController@memoList')->name('memo_list');
 });
 
 Auth::routes();

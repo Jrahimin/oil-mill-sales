@@ -9,6 +9,7 @@ class SalePackage extends Model
 {
     protected $guarded = ['id', 'created_at', 'updated_at'];
     protected $fillable = ['serial_no', 'user_id', 'customer_id', 'vehicle_id', 'route_id', 'journey_from', 'journey_to', 'total_price', 'paid', 'unpaid', 'status'];
+    protected $appends = ['sale_date'];
 
     public function sales(){
         return $this->hasMany(Sale::class);
@@ -28,5 +29,9 @@ class SalePackage extends Model
 
     public function route(){
         return $this->belongsTo(Route::class);
+    }
+
+    public function getSaleDateAttribute(){
+        return date('d-m-Y', strtotime($this->created_at));
     }
 }

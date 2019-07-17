@@ -11,13 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class ItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     use ApiResponseTrait;
+
     public function index(Request $request)
     {
         try{

@@ -140,6 +140,7 @@
                 <li><a href="{{ route('vehicle.index') }}"><i class="fa fa-car" aria-hidden="true"></i><span>গাড়ি</span></a></li>
                 <li><a href="{{ route('customers.index') }}"><i class="fa fa-user" aria-hidden="true"></i><span>ক্রেতা</span></a></li>
                 <li><a href="{{ route('sales.index') }}"><i class="fa fa-cart-plus" aria-hidden="true"></i><span>বিক্রয়</span></a></li>
+                <li><a href="{{ route('memo_list') }}"><i class="fa fa-file" aria-hidden="true"></i><span>মেমো</span></a></li>
                 <li><a href="{{ route('route_report') }}"><i class="fa fa-info" aria-hidden="true"></i><span>রুট মাফিক মেমো</span></a></li>
             </ul>
         </section>
