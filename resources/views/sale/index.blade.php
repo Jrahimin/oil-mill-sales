@@ -133,7 +133,7 @@
                             <td>@{{ sale.unit_price }} </td>
                             <td>@{{ sale.quantity }}</td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-danger" @click="saleList.splice(index, 1)"><span><i class="fa fa-minus"></i></span></a>
+                                <a href="#" class="btn btn-sm btn-danger" @click="removeItem(index)"><span><i class="fa fa-minus"></i></span></a>
                             </td>
                         </tr>
                         </tbody>
@@ -141,9 +141,9 @@
                 </div>
             </div>
 
-            <div class="form-group col-md-3 pull-right">
+            <div class="form-group pull-right">
                 <label>Total: @{{ total }}</label><br/>
-                <label for="no_of_drum_return">Paid</label>
+                <label for="paid">Paid</label>
                 <input type="text" class="form-control" v-model="sale_pack.paid">
             </div>
             <div class="clearfix"></div>
@@ -195,14 +195,11 @@
                     item:'',
                     category_name:'',
                 },
+                perItemPriceList:[],
                 total:0,
                 stock_remaining:'',
                 saleList:[],
                 errors:[],
-            },
-
-            created(){
-                console.log(this.customers)
             },
 
             methods:{
@@ -215,6 +212,11 @@
                     this.stock_remaining = '';
                     this.saleList = [];
                     this.errors = [];
+                },
+
+                removeItem(index){
+                    this.saleList.splice(index, 1);
+                    this.total -=this.perItemPriceList[index];
                 },
 
                 getItems(categoryId) {
@@ -235,12 +237,10 @@
                     })
                 },
                 getStocks(itemId) {
-                    let item = this.items.filter(item=> item.id == itemId)[0];
-                    this.sale.item = item;
+                    this.sale.item = this.items.filter(item=> item.id == itemId)[0];
 
                     axios.get('item/'+itemId+'/stocks').then(response=> {
                         this.stocks = response.data;
-                        console.log(response.data);
                     })
                 },
                 getSalePrice(stockId) {
@@ -252,30 +252,23 @@
                     })
                 },
                 AddToBucket(){
-                    this.total +=this.sale.quantity*this.sale.unit_price;
-
                     if(!this.sale.item_id || !this.sale.unit_price || !this.sale.category_id || !this.sale.stock_id || !this.sale.quantity){
                         alert("please provide all the sales info");
                         return;
                     }
                     this.saleList.push(JSON.parse(JSON.stringify(this.sale)));
+
+                    axios.get('{{ route('sale_quantity') }}', {params:this.sale}).then(response=>{
+                        this.total += this.sale.unit_price*response.data;
+                        this.perItemPriceList.push(this.sale.unit_price*response.data)
+                    }).catch(error=>{
+                        this.errors = error.response.data.messages;
+                    });
                 },
 
                 sellItem(){
                     axios.post('{{ route('sales.store') }}', {"sale_pack":this.sale_pack, "sale_list":this.saleList}).then(response=>{
                         this.resetComponent();
-
-                        /*this.$toasted.success("Successful Sale",{
-                            position: 'top-center',
-                            theme: 'bubble',
-                            duration: 6000,
-                            action : {
-                                text : 'Close',
-                                onClick : (e, toastObject) => {
-                                    toastObject.goAway(0);
-                                }
-                            },
-                        });*/
 
                         window.location = `{!! route('memo') !!}`+'?packId='+response.data;
                     }).catch(error=>{

@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function (){
     Route::get('items/category/{categoryId}','ItemController@getItemsForCategory');
 
     Route::resource('sales', 'SaleController');
+    Route::get('sale-quantity', 'SaleController@getSaleQuantity')->name('sale_quantity');
 
     Route::resource('customers', 'CustomerController');
 

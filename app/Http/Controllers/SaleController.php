@@ -10,6 +10,7 @@ use App\Model\SalePackage;
 use App\Model\Stock;
 use App\Model\UnitConversion;
 use App\Traits\ApiResponseTrait;
+use App\Traits\QuantityFromConversionTrait;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ use Illuminate\Support\Str;
 
 class SaleController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, QuantityFromConversionTrait;
     /**
      * Display a listing of the resource.
      *
@@ -135,22 +136,14 @@ class SaleController extends Controller
                 // if stock unit and sale unit differs, we need to make conversion and adjust stock accordingly
                 $stock = Stock::findOrFail($sale['stock_id']);
 
-                $conversionRate = false;
-                if($stock->item_unit_id != $sale['item_unit_id'])
-                {
-                    $conversion = UnitConversion::where('unit_id_from', $stock->item_unit_id)->where('unit_id_to', (int) $sale['item_unit_id'])->first();
-                    if(!$conversion){
-                        Log::debug("Stock: ".json_encode($stock));
-                        DB::rollBack();
-                        return response()->json([
-                            'messages' => ["Invalid Unit Conversion"],
-                        ], 422);
-                    }
-
-                    $conversionRate = $conversion->conversion_rate;
+                $quantity = $this->getQuantity($sale, $stock);
+                if(!$quantity){
+                    Log::debug("Stock: ".json_encode($stock));
+                    DB::rollBack();
+                    return response()->json([
+                        'messages' => ["Invalid Unit Conversion"],
+                    ], 422);
                 }
-
-                $quantity = $conversionRate ? $sale['quantity']/$conversionRate : $sale['quantity'];
 
                 if($stock->quantity - $stock->sold < $quantity){
                     $item = Item::findOrFail($sale['item_id']);
@@ -187,6 +180,21 @@ class SaleController extends Controller
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
             return $this->exceptionResponse('Something Went Wrong');
         }
+    }
+
+    public function getSaleQuantity(Request $request)
+    {
+        $sale = $request->only(['stock_id', 'item_unit_id', 'quantity']);
+
+        $quantity = $this->getQuantity($sale);
+
+        if(!$quantity){
+            return response()->json([
+                'messages' => ["Invalid Unit Conversion"],
+            ], 422);
+        }
+
+        return response()->json($quantity);
     }
 
     /**
