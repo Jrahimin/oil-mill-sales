@@ -6,8 +6,8 @@
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="panel-title col-md-6">Item List</div>
-                        <span class="panel-title pull-right">Total @{{ total }} item(s) Found &nbsp;</span>
+                        <div class="panel-title col-md-6">Memo List</div>
+                        <span class="panel-title pull-right">Total @{{ total }} memo(s) Found &nbsp;</span>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -42,19 +42,19 @@
                     <div v-if="pagination.total > pagination.per_page" class="col-md-offset-4">
                         <ul class="pagination">
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getItemList(pagination.first_page_url)" href="#">First Page</a>
+                                <a @click.prevent="getSalePacks(pagination.first_page_url)" href="#">First Page</a>
                             </li>
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getItemList(pagination.prev_page_url)" href="#">Previous</a>
+                                <a @click.prevent="getSalePacks(pagination.prev_page_url)" href="#">Previous</a>
                             </li>
                             <li v-for="n in pagination.last_page" :class="{active:pagination.current_page==n}"  v-if="n<=pagination.current_page+3&&n>=pagination.current_page-3">
-                                <a @click.prevent="getItemList('items?page='+n)" href="#">@{{ n }}</a>
+                                <a @click.prevent="getSalePacks('memo-list?page='+n)" href="#">@{{ n }}</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getItemList(pagination.next_page_url)" href="#">Next</a>
+                                <a @click.prevent="getSalePacks(pagination.next_page_url)" href="#">Next</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getItemList(pagination.last_page_url)" href="#">Last Page</a>
+                                <a @click.prevent="getSalePacks(pagination.last_page_url)" href="#">Last Page</a>
                             </li>
                         </ul>
                     </div>
@@ -90,7 +90,7 @@
 
                     axios.get(pageUrl).then(response=> {
                         that.salePackages = response.data.data;
-                        that.pagination = response.data.data;
+                        that.pagination = response.data;
                         that.total = that.pagination.total;
                     })
                 },
