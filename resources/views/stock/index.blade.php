@@ -134,7 +134,7 @@
                 total:0,
                 units: {!! json_encode(__itemUnitDropdown()) !!},
                 stocks:[],
-                items:[],
+                items: {!! json_encode(__itemDropdown()) !!},
                 aStock:{},
                 newStock:{stock_place:'', item_id:'', item_unit_id:'', status:1},
                 stock_id:'',
@@ -181,7 +181,6 @@
 
                     axios.get(pageUrl, {params:that.search}).then(response=> {
                         that.stocks = response.data.stocks.data;
-                        that.items = response.data.items;
                         that.pagination = response.data.stocks;
                         that.total = that.pagination.total;
                     })
