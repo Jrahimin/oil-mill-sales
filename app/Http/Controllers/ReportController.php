@@ -16,12 +16,12 @@ class ReportController extends Controller
     public function memoList(Request $request)
     {
         try{
-            /*$salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->get();
-                dd($salePacks[0]->customer->name);*/
             if(!$request->wantsJson())
                 return view('reports.memo.index', compact('salePacks'));
 
-            $salePacks = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route')->paginate(2);
+            $whereFilterList = ['customer_id', 'user_id', 'route_id'];
+            $query = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route');
+            $salePacks = $this->filterMemoList($request, $query, $whereFilterList)->paginate(2);
 
             return $this->successResponse($salePacks);
         }
@@ -61,5 +61,23 @@ class ReportController extends Controller
         $salePacks = $query->get();
 
         return view('reports.routewise-memo.memo', compact('salePacks'));
+    }
+
+    protected function filterMemoList(Request $request, $query, $whereFilterList=[], $likeFilterList=[])
+    {
+        Log::debug("request: ".print_r($request->all(),true));
+        Log::debug("status type: ".gettype($request->payment_status));
+        Log::debug("whereFilter: ".print_r($whereFilterList,true));
+
+        if($request->payment_status === '0')
+            $query->where('unpaid', 0);
+        if($request->payment_status === '1')
+            $query->where('unpaid', '>', 0);
+
+        $query = self::filterQuery($request, $query, $whereFilterList, $likeFilterList);
+
+        $query = self::filterDate($query,'created_at', $request->from_date, $request->to_date);
+
+        return $query;
     }
 }

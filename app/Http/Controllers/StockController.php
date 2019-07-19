@@ -24,12 +24,9 @@ class StockController extends Controller
             if(!$request->wantsJson())
                 return view('stock.index');
 
-            //$data['stocks'] = Stock::with('item.category', 'user', 'item_unit')->paginate(2);
-
             $whereFilterList = ['item_id', 'stock_place', 'status'];
             $query = Stock::with('item.category', 'user', 'item_unit');
             $data['stocks'] = $this->filter($request, $query, $whereFilterList)->paginate(2);
-
 
             return $this->successResponse($data);
         }

@@ -3,6 +3,8 @@
 @section('content')
     <div id="memoList">
         <div class="col-md-10 col-md-offset-1">
+            @include('reports.memo.search')
+
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="row">
@@ -26,7 +28,10 @@
 
                         <tbody>
                         <tr v-for="salePack in salePackages" >
-                            <td>@{{ salePack.customer.name }}</td>
+                            <td>
+                                <p><i class="fa fa-user">&nbsp;@{{ salePack.customer.name }}</i></p>
+                                <span class="small"><i class="fa-mobile">&nbsp;@{{ salePack.customer.mobile_no }}</i></span>
+                            </td>
                             <td>@{{ salePack.route ? salePack.route.journey_from+' থেকে '+salePack.route.journey_to : 'N/A'  }}</td>
                             <td>@{{ salePack.total_price }}</td>
                             <td>@{{ salePack.unpaid }}</td>
@@ -42,19 +47,19 @@
                     <div v-if="pagination.total > pagination.per_page" class="col-md-offset-4">
                         <ul class="pagination">
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getSalePacks(pagination.first_page_url)" href="#">First Page</a>
+                                <a @click.prevent="getMemoList(pagination.first_page_url)" href="#">First Page</a>
                             </li>
                             <li :class="[{disabled:!pagination.prev_page_url}]">
-                                <a @click.prevent="getSalePacks(pagination.prev_page_url)" href="#">Previous</a>
+                                <a @click.prevent="getMemoList(pagination.prev_page_url)" href="#">Previous</a>
                             </li>
                             <li v-for="n in pagination.last_page" :class="{active:pagination.current_page==n}"  v-if="n<=pagination.current_page+3&&n>=pagination.current_page-3">
-                                <a @click.prevent="getSalePacks('memo-list?page='+n)" href="#">@{{ n }}</a>
+                                <a @click.prevent="getMemoList('memo-list?page='+n)" href="#">@{{ n }}</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getSalePacks(pagination.next_page_url)" href="#">Next</a>
+                                <a @click.prevent="getMemoList(pagination.next_page_url)" href="#">Next</a>
                             </li>
                             <li :class="[{disabled:!pagination.next_page_url}]">
-                                <a @click.prevent="getSalePacks(pagination.last_page_url)" href="#">Last Page</a>
+                                <a @click.prevent="getMemoList(pagination.last_page_url)" href="#">Last Page</a>
                             </li>
                         </ul>
                     </div>
@@ -77,18 +82,36 @@
                 salePackages:[],
                 pagination:{},
                 errors:[],
+                
+                customers:{!! json_encode(__customerDropdown()) !!},
+                routes:{!! json_encode(__routesDropdown()) !!},
+                users:{!! json_encode(__userDropdown()) !!},
+                
+                search:{
+                    customer_id:'',
+                    route_id:'',
+                    payment_status:'',
+                    user_id:'',
+                    from_date:'',
+                    to_date:'',
+                }
             },
 
             created(){
-                this.getSalePacks();
+                this.getMemoList();
             },
 
             methods:{
-                getSalePacks(pageUrl) {
+                reset(){
+                    this.search = {customer_id:'',route_id:'',payment_status:'',user_id:'',from_date:'',to_date:''};
+                    this.getMemoList();
+                },
+
+                getMemoList(pageUrl) {
                     let that = this;
                     pageUrl = pageUrl == undefined ? `{{route('memo_list')}}` : pageUrl;
 
-                    axios.get(pageUrl).then(response=> {
+                    axios.get(pageUrl, {params:this.search}).then(response=> {
                         that.salePackages = response.data.data;
                         that.pagination = response.data;
                         that.total = that.pagination.total;

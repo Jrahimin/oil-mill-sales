@@ -24,6 +24,14 @@ if (!function_exists('__customerDropdown')) {
     }
 }
 
+if (!function_exists('__userDropdown')) {
+    function __userDropdown()
+    {
+        $customers = \App\User::selectRaw("CONCAT(name,' - ',mobile_no) as name, id")->pluck('name', 'id');
+        return ($customers ? $customers->toArray() : []);
+    }
+}
+
 if (!function_exists('__itemUnitDropdown')) {
     function __itemUnitDropdown()
     {
