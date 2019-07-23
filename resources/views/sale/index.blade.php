@@ -123,6 +123,7 @@
                             <th>ItemName</th>
                             <th>Price</th>
                             <th>Quantity</th>
+                            <th>Total</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -132,6 +133,7 @@
                             <td>@{{ sale.item.title }}</td>
                             <td>@{{ sale.unit_price }} </td>
                             <td>@{{ sale.quantity }}</td>
+                            <td>@{{ sale.total_price }}</td>
                             <td>
                                 <a href="#" class="btn btn-sm btn-danger" @click="removeItem(index)"><span><i class="fa fa-minus"></i></span></a>
                             </td>
@@ -142,7 +144,7 @@
             </div>
 
             <div class="form-group pull-right">
-                <label>Total: @{{ total }}</label><br/>
+                <label>Total: @{{ sale_pack.total }}</label><br/>
                 <label for="paid">Paid</label>
                 <input type="text" class="form-control" v-model="sale_pack.paid">
             </div>
@@ -176,7 +178,8 @@
                     customer_id:'',
                     vehicle_id:'',
                     route_id:'',
-                    paid:''
+                    paid:'',
+                    total:0,
                 },
 
                 items:[],
@@ -188,6 +191,7 @@
                     item_unit_id:'',
                     stock_id:'',
                     quantity:'',
+                    total_price:0,
                     no_of_jar:0,
                     no_of_drum:0,
                     no_of_jar_return:0,
@@ -196,7 +200,6 @@
                     category_name:'',
                 },
                 perItemPriceList:[],
-                total:0,
                 stock_remaining:'',
                 saleList:[],
                 errors:[],
@@ -216,7 +219,7 @@
 
                 removeItem(index){
                     this.saleList.splice(index, 1);
-                    this.total -=this.perItemPriceList[index];
+                    this.sale_pack.total -=this.perItemPriceList[index];
                 },
 
                 getItems(categoryId) {
@@ -256,11 +259,15 @@
                         alert("please provide all the sales info");
                         return;
                     }
-                    this.saleList.push(JSON.parse(JSON.stringify(this.sale)));
 
+                    // getting quantity after conversion of units
                     axios.get('{{ route('sale_quantity') }}', {params:this.sale}).then(response=>{
-                        this.total += this.sale.unit_price*response.data;
-                        this.perItemPriceList.push(this.sale.unit_price*response.data)
+                        let quantity = response.data;
+                        this.sale.total_price = this.sale.unit_price*quantity;
+                        this.sale_pack.total += this.sale.total_price;
+                        this.perItemPriceList.push(this.sale.total_price);
+
+                        this.saleList.push(JSON.parse(JSON.stringify(this.sale)));
                     }).catch(error=>{
                         this.errors = error.response.data.messages;
                     });
