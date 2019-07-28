@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\route\RouteStoreRequest;
+use App\Http\Requests\route\RouteUpdateRequest;
+use App\Model\Route;
+use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RouteController extends Controller
 {
@@ -11,9 +16,23 @@ class RouteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    use ApiResponseTrait;
+
+    public function index(Request $request)
     {
-        //
+        try{
+            if(!$request->wantsJson())
+                return view('route.index');
+
+            $routes = Route::paginate(2);
+            return $this->successResponse($routes);
+        }catch (\Exception $e)
+        {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
+
     }
 
     /**
@@ -32,9 +51,16 @@ class RouteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RouteStoreRequest $request)
     {
-        //
+        try {
+
+            Route::create($request->all());
+        }
+        catch (\Exception $e) {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**
@@ -66,9 +92,18 @@ class RouteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(RouteUpdateRequest $request, $id)
     {
-        //
+        try{
+            if(auth()->user()->type != 'admin')
+                return $this->exceptionResponse('You are not allowed to update item',401);
+
+            Route::findOrFail($id)->update($request->all());
+        }
+        catch (\Exception $e){
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something Went Wrong');
+        }
     }
 
     /**
@@ -79,6 +114,19 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try
+        {
+            if(auth()->user()->type != 'admin')
+            {
+                return $this->exceptionResponse('You are not allowed to delete route ',401);
+            }
+            Route::destroy($id);
+            return $this->successResponseWithMsg('Successfully deleted route');
+        }
+        catch (\Exception $e)
+        {
+            Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
+            return $this->exceptionResponse('Something went wrong');
+        }
     }
 }

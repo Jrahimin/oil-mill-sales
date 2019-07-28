@@ -17,7 +17,7 @@ class ReportController extends Controller
     {
         try{
             if(!$request->wantsJson())
-                return view('reports.memo.index', compact('salePacks'));
+                return view('reports.memo.index');
 
             $whereFilterList = ['customer_id', 'user_id', 'route_id'];
             $query = SalePackage::with('sales.item','sales.item_unit','user','vehicle','customer','route');
