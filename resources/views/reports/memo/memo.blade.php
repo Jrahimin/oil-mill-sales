@@ -196,7 +196,7 @@
     </table>
 </div>
 
-<div style="width: 1380px; margin-top: 15px;" id="printDiv">
+<div style="width: 860px; margin: 15px auto;" id="printDiv">
     <input class="button" type="button" value="print" style="float: right;" onclick="printPage()">
 </div>
 

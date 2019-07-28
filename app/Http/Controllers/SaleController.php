@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumerations\SaleType;
 use App\Model\Customer;
 use App\Model\Item;
 use App\Model\ItemUnit;
@@ -98,6 +99,9 @@ class SaleController extends Controller
             $lastSalePack = SalePackage::latest('id')->first();
             $salePackCount = $lastSalePack ? $lastSalePack->id : 1;
             $serialNo = ($salePackCount + 1) . "-" . Str::random(3);
+
+            $unpaid = $request->sale_pack['total'] - $request->sale_pack['paid'];
+
             $salePackData = array(
                 "serial_no" => $serialNo,
                 "user_id" => auth()->user()->id,
@@ -105,18 +109,22 @@ class SaleController extends Controller
                 "vehicle_id" => $request->sale_pack['vehicle_id'] ?? null,
                 "route_id" => $request->sale_pack['route_id'] ?? null,
                 "status" => 1,
-                "paid" => $request->sale_pack['paid']
+                "total_price" => $request->sale_pack['total'],
+                "paid" => $request->sale_pack['paid'],
+                "unpaid" => $unpaid,
             );
 
             DB::beginTransaction();
 
+            if($unpaid){
+                $customer = Customer::findOrFail($request->sale_pack['customer_id']);
+                $customer->increment('unpaid', $unpaid);
+            }
+
             $salePack = SalePackage::create($salePackData);
 
             $saleData = [];
-            $salePackPrice = 0;
             foreach ($request->sale_list as $sale) {
-                $saleTotal = $sale['unit_price'] * $sale['quantity']; // per sale total
-                $salePackPrice += $saleTotal; // calculating full sale pack total price
                 $data = array(
                     "sale_package_id" => $salePack->id,
                     "item_id" => $sale['item_id'],
@@ -128,7 +136,7 @@ class SaleController extends Controller
                     "no_of_jar_return" => $sale['no_of_jar_return'],
                     "no_of_drum_return" => $sale['no_of_drum_return'],
                     "unit_price" => $sale['unit_price'],
-                    "total_price" => $saleTotal,
+                    "total_price" => $sale['total_price'],
                 );
 
                 $saleData[] = $data;
@@ -158,17 +166,6 @@ class SaleController extends Controller
                 $stock->increment('sold', $quantity);
             }
 
-            $unpaid = $salePackPrice - $request->sale_pack['paid'];
-            if($unpaid){
-                $salePack->update([
-                    "total_price" => $salePackPrice,
-                    "unpaid" => $unpaid
-                ]);
-
-                $customer = Customer::findOrFail($request->sale_pack['customer_id']);
-                $customer->increment('unpaid', $unpaid);
-            }
-
             Sale::insert($saleData);
 
             DB::commit();
@@ -177,6 +174,7 @@ class SaleController extends Controller
         }
         catch (\Exception $e){
             DB::rollBack();
+
             Log::error($e->getFile().' '.$e->getLine().' '.$e->getMessage());
             return $this->exceptionResponse('Something Went Wrong');
         }
@@ -257,19 +255,18 @@ class SaleController extends Controller
         }
 
         // validating sale pack attributes
-        if((int) $request->sale_pack['sale_type'] == 1){
-            $validator = Validator::make($request->sale_pack,[
-                'customer_id' => 'required|integer',
+        $commonValidates = array(
+            'customer_id' => 'required|integer',
+            'paid' => 'required|numeric',
+            'total' => 'required|numeric'
+        );
+        if((int) $request->sale_pack['sale_type'] == SaleType::$WITHVEHICLE) {
+            $otherValidates = array(
                 'vehicle_id' => 'required|integer',
                 'route_id' => 'required|integer',
-                'paid' => 'required|numeric'
-            ]);
-        }else{
-            $validator = Validator::make($request->sale_pack,[
-                'customer_id' => 'required|integer',
-                'paid' => 'required|numeric'
-            ]);
+            );
         }
+        $validator = Validator::make($request->sale_pack, array_merge($commonValidates, $otherValidates));
 
         if($validator->fails()){
             throw new HttpResponseException(response()->json([
@@ -283,7 +280,9 @@ class SaleController extends Controller
             // validating sale_list attributes
             $validator = Validator::make($aData,[
                 'unit_price' => 'required|numeric',
+                'total_price' => 'required|numeric',
                 'item_id' => 'required|integer',
+                'item_unit_id' => 'required|integer',
                 'category_id' => 'required|integer',
                 'stock_id' => 'required|integer',
                 'quantity' => 'required|integer',
