@@ -2,7 +2,7 @@
 
 @section('content')
     <div id="itemCategoryList">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-10 col-md-offset-1">
             @if(auth()->user()->type=='admin')
                 <button class="btn btn-primary pull-right" data-toggle="modal" data-target="#createItemCategory" @click="newItemCategory={}">
                     <i class="fa fa-plus"> Add</i>
