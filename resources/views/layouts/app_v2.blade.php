@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
-    <title>Oil Mill</title>
+    <title>{{$display_settings->company_name}}</title>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
@@ -62,7 +62,7 @@
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><img style="border-radius: 50px;padding:5px;" src="{{ asset('images/logo.png') }}" height="50px" width="50px"></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><img style="border-radius: 50px;padding:5px;" src="{{ asset('images/logo.png') }}" height="50px" width="50px"> <b>Oil Mill</b> Management</span>
+            <span class="logo-lg"><img style="border-radius: 50px;padding:5px;" src="{{ asset('images/logo.png') }}" height="50px" width="50px"> <b>{{$display_settings->company_name}}</b> Management</span>
         </a>
 
         <nav class="navbar navbar-static-top">
@@ -71,7 +71,7 @@
                 <span class="sr-only">Toggle navigation</span>
             </a>
 
-            <a href="" class="navbar-brand">Oil Mill</a>
+            <a href="" class="navbar-brand">{{$display_settings->company_name}}</a>
 
             <!-- Navbar Right Menu -->
             <div class="navbar-custom-menu">
@@ -123,11 +123,11 @@
             <!-- Sidebar user panel -->
             <div class="user-panel">
                 <div class="pull-left image">
-                    <img src="{{ asset('images/profile.png') }}" class="img-circle" alt="User Image">
+                    <img src="{{ asset($display_settings->company_logo) }}" class="img-circle" alt="User Image">
                 </div>
                 <div class="pull-left info">
                     <p>{{ Auth::user()->name }}</p>
-                    <p class="text-muted">Oil Mill</p>
+                    <p class="text-muted">{{$display_settings->company_name}}</p>
                 </div>
             </div>
 
